@@ -1,13 +1,13 @@
 <template>
   <div>
-    <a-spin :spinning="loading">
-      <a-modal
-        :title="title"
-        :visible="visible"
-        :confirm-loading="confirmLoading"
-        @ok="handleOk"
-        @cancel="close"
-      >
+    <a-modal
+      :title="title"
+      :visible="visible"
+      :confirm-loading="confirmLoading"
+      @ok="handleOk"
+      @cancel="close"
+    >
+      <a-spin :spinning="loading">
         <a-form-model
           :model="brand"
           :label-col="labelCol"
@@ -24,13 +24,13 @@
           </a-form-model-item>
           <a-form-model-item v-if="action === 'edit'" label="Status">
             <a-select v-model="brand.status" placeholder="Select Status">
-              <a-select-option value="1"> 1 </a-select-option>
-              <a-select-option value="2"> 2 </a-select-option>
+              <a-select-option value="SHOW"> SHOW </a-select-option>
+              <a-select-option value="HIDDEN"> HIDDEN </a-select-option>
             </a-select>
           </a-form-model-item>
         </a-form-model>
-      </a-modal>
-    </a-spin>
+      </a-spin>
+    </a-modal>
   </div>
 </template>
 <script>
@@ -49,7 +49,7 @@ export default {
         brandName: '',
         brandCode: '',
         brandDesc: '',
-        status: '1',
+        status: 'SHOW',
       },
     }
   },
@@ -79,7 +79,9 @@ export default {
           status: result.status,
         }
       } catch (e) {
-        console.log(e.response)
+        if (e.response) {
+          this.$message.warning(`Error please try agian!`)
+        }
       } finally {
         this.loading = false
       }
@@ -105,7 +107,7 @@ export default {
             brandName: '',
             brandCode: '',
             brandDesc: '',
-            status: '1',
+            status: 'SHOW',
           }
         }
         this.$emit('refreshBrand')
@@ -124,7 +126,7 @@ export default {
         brandName: '',
         brandCode: '',
         brandDesc: '',
-        status: '1',
+        status: 'SHOW',
       }
     },
   },

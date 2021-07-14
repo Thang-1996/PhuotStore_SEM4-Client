@@ -1,12 +1,19 @@
 <template>
-  <a-table
-    :columns="columns"
-    :data-source="categories"
-  >
-    <a-tag slot="status" slot-scope="text" :color="text === 1 ? 'green' : 'red'"> {{ text === 1 ? 'Active' : 'Cancel' }}</a-tag>
+  <a-table :columns="columns" :data-source="categories">
+    <a-tag
+      slot="status"
+      slot-scope="text"
+      :color="text === 'SHOW' ? 'green' : 'red'"
+    >
+      {{ text === 'SHOW' ? 'SHOW' : 'HIDDEN' }}</a-tag
+    >
     <span slot="action" slot-scope="record">
-      <a-button type="primary"  @click="editCategory(record.id)" ><a-icon type="edit"/></a-button>
-      <a-button type="danger" @click="deleteCategory(record.id)"><a-icon type="delete" /></a-button>
+      <a-button type="primary" @click="editCategory(record.id)"
+        ><a-icon type="edit"
+      /></a-button>
+      <a-button type="danger" @click="deleteCategory(record.id)"
+        ><a-icon type="delete"
+      /></a-button>
     </span>
   </a-table>
 </template>
@@ -39,29 +46,29 @@ const columns = [
     key: 'action',
     scopedSlots: { customRender: 'action' },
   },
-];
+]
 
 export default {
-  props : {
-    categories : {
-      type : Array,
-      default : () => []
-    }
-  },
   name: 'Table',
+  props: {
+    categories: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     return {
       columns,
       loading: false,
-    };
-  },
-  methods : {
-    editCategory(id){
-      this.$emit('editCategory',id)
-    },
-    deleteCategory(id){
-      this.$emit('deleteCategory',id)
     }
-  }
+  },
+  methods: {
+    editCategory(id) {
+      this.$emit('editCategory', id)
+    },
+    deleteCategory(id) {
+      this.$emit('deleteCategory', id)
+    },
+  },
 }
 </script>

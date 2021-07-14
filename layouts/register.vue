@@ -2,7 +2,5 @@
   <Nuxt />
 </template>
 <script>
-export default {
-  middleware : 'isLogin',
-}
+export default {}
 </script>

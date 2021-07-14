@@ -91,6 +91,7 @@
 
 <script>
 export default {
+  layout: 'register',
   data() {
     return {
       loading: false,
@@ -108,7 +109,6 @@ export default {
             username: values.username,
             email: values.email,
             password: values.password,
-            role: ['user'],
           })
         }
       })

@@ -10,6 +10,8 @@
         /></a-button>
         <productTable
           :products="products"
+          :categories="categories"
+          :brands="brands"
           @editProduct="editProduct"
           @deleteProduct="deleteProduct"
         />
@@ -25,7 +27,7 @@ export default {
     return {
       visible: false,
       loading: false,
-      products: [],
+      brands: [],
       columns: [],
     }
   },

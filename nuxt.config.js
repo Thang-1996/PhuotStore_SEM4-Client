@@ -51,7 +51,7 @@ export default {
   ],
   subdomains: ['admin'],
   env: {
-    baseUrl: 'http://localhost:8080',
+    baseUrl: 'https://phuotstoreapiv1.herokuapp.com',
     ROOT_DOMAIN: 'user',
   },
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

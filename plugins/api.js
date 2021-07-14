@@ -37,6 +37,8 @@ export default function ({ $axios, redirect }, inject) {
     deleteBrand: (id, config) =>
       axios.$delete(`api/v1/brands/delete/${id}`, config),
     productList: (config) => axios.$get('api/v1/products', config),
+    addProduct: (data, config) =>
+      axios.$post('api/v1/products/add', data, config),
   }
   inject('api', api)
 }

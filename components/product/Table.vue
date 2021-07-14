@@ -1,5 +1,5 @@
 <template>
-  <a-table :columns="columns" :data-source="brands">
+  <a-table :columns="columns" :data-source="products">
     <a-tag
       slot="status"
       slot-scope="text"
@@ -8,10 +8,10 @@
       {{ text === 'SHOW' ? 'SHOW' : 'HIDDEN' }}</a-tag
     >
     <span slot="action" slot-scope="record">
-      <a-button type="primary" @click="editBrand(record.id)"
+      <a-button type="primary" @click="editProduct(record.id)"
         ><a-icon type="edit"
       /></a-button>
-      <a-button type="danger" @click="deleteBrand(record.id)"
+      <a-button type="danger" @click="deleteProduct(record.id)"
         ><a-icon type="delete"
       /></a-button>
     </span>
@@ -36,6 +36,31 @@ const columns = [
     key: 'desc',
   },
   {
+    title: 'Discount',
+    dataIndex: 'discount',
+    key: 'discount',
+  },
+  {
+    title: 'Quantity',
+    dataIndex: 'qty',
+    key: 'qty',
+  },
+  {
+    title: 'Price',
+    dataIndex: 'price',
+    key: 'price',
+  },
+  {
+    title: 'Category',
+    dataIndex: 'categoryID',
+    key: 'categoryID',
+  },
+  {
+    title: 'brandID',
+    dataIndex: 'brandID',
+    key: 'brandID',
+  },
+  {
     title: 'Status',
     dataIndex: 'status',
     key: 'status',
@@ -51,7 +76,7 @@ const columns = [
 export default {
   name: 'Table',
   props: {
-    brands: {
+    products: {
       type: Array,
       default: () => [],
     },
@@ -63,11 +88,11 @@ export default {
     }
   },
   methods: {
-    editBrand(id) {
-      this.$emit('editBrand', id)
+    editProduct(id) {
+      this.$emit('editProduct', id)
     },
-    deleteBrand(id) {
-      this.$emit('deleteBrand', id)
+    deleteProduct(id) {
+      this.$emit('deleteProduct', id)
     },
   },
 }
