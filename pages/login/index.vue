@@ -110,7 +110,11 @@ export default {
           roles: result.roles,
           userID: result.id,
         })
-        await this.$router.push('/admin/dashboard')
+        if (result.roles.include('ROLE_ADMIN')) {
+          await this.$router.push('/admin/dashboard')
+        } else {
+          await this.$router.push('/')
+        }
         this.$message.success(`Successfully Login!`)
       } catch (e) {
         if (e.response.status === 401) {

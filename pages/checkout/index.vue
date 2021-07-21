@@ -3,8 +3,6 @@
     <form method="post">
       <div class="row">
         <div class="col-xl-7">
-          <!-- Buyer Info Start -->
-          {{ billingDetails }}
           <h4>Billing Details</h4>
           <div class="row">
             <div class="form-group col-xl-6">
