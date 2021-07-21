@@ -64,6 +64,7 @@ export default {
   },
   methods: {
     show() {
+      this.resetData()
       this.categoryID = ''
       this.action = 'create'
       this.title = 'Create Category'
@@ -88,8 +89,8 @@ export default {
           status: result.status,
         }
       } catch (e) {
-        if (e.response) {
-          this.$message.warning(`Error please try agian!`)
+        if (e.response.data) {
+          this.$message.warning(e.response.data.details)
         }
       } finally {
         this.loading = false
@@ -112,25 +113,23 @@ export default {
             },
           })
           this.$message.success(`Add Category Successfully!`)
-          this.category = {
-            categoryName: '',
-            categoryCode: '',
-            categoryDesc: '',
-            status: 'SHOW',
-          }
         }
-        this.$emit('refreshCategory')
       } catch (e) {
-        if (e.response) {
-          this.$message.warning(`Error please try agian!`)
+        if (e.response.data) {
+          this.$message.warning(e.response.data.details)
         }
       } finally {
         this.confirmLoading = false
         this.visible = false
+        this.resetData()
+        this.$emit('refreshCategory')
       }
     },
     close(e) {
       this.visible = false
+      this.resetData()
+    },
+    resetData() {
       this.category = {
         categoryName: '',
         categoryCode: '',

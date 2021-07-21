@@ -1,5 +1,6 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
+  ssr: false,
   head: {
     title: 'Phượt Store',
     meta: [
@@ -20,10 +21,89 @@ export default {
         href: 'https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i',
       },
     ],
+    scripts: [
+      {
+        src: 'assets/js/plugins/jquery-3.5.1.min.js',
+        type: 'text/javascript',
+      },
+      {
+        src: 'assets/js/plugins/popper.min.js',
+        type: 'text/javascript',
+      },
+      {
+        src: 'assets/js/plugins/bootstrap.min.js',
+        type: 'text/javascript',
+      },
+      {
+        src: 'assets/js/plugins/imagesloaded.min.js',
+        type: 'text/javascript',
+      },
+      {
+        src: 'assets/js/plugins/jquery.magnific-popup.min.js',
+        type: 'text/javascript',
+      },
+      {
+        src: 'assets/js/plugins/jquery.countdown.min.js',
+        type: 'text/javascript',
+      },
+      {
+        src: 'assets/js/plugins/jquery.waypoints.min.js',
+        type: 'text/javascript',
+      },
+      {
+        src: 'assets/js/plugins/jquery.counterup.min.js',
+        type: 'text/javascript',
+      },
+      {
+        src: 'assets/js/plugins/jquery.zoom.min.js',
+        type: 'text/javascript',
+      },
+      {
+        src: 'assets/js/plugins/jquery.inview.min.js',
+        type: 'text/javascript',
+      },
+      {
+        src: 'assets/js/plugins/jquery.event.move.js',
+        type: 'text/javascript',
+      },
+      {
+        src: 'assets/js/plugins/wow.min.js',
+        type: 'text/javascript',
+      },
+      {
+        src: 'assets/js/plugins/isotope.pkgd.min.js',
+        type: 'text/javascript',
+      },
+      {
+        src: 'assets/js/plugins/slick.min.js',
+        type: 'text/javascript',
+      },
+      {
+        src: 'assets/js/plugins/ion.rangeSlider.min.js',
+        type: 'text/javascript',
+      },
+      {
+        src: 'assets/js/main.js',
+        type: 'text/javascript',
+      },
+    ],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: ['ant-design-vue/dist/antd.css', '@/assets/css/main.scss'],
+  css: [
+    'ant-design-vue/dist/antd.css',
+    '@/assets/css/main.scss',
+    '@/assets/user/css/plugins/bootstrap.min.css',
+    '@/assets/user/css/plugins/animate.min.css',
+    '@/assets/user/css/plugins/magnific-popup.css',
+    '@/assets/user/css/plugins/slick.css',
+    '@/assets/user/css/plugins/slick-theme.css',
+    '@/assets/user/css/plugins/ion.rangeSlider.min.css',
+    '@/assets/user/fonts/flaticon/flaticon.css',
+    '@/assets/user/css/plugins/font-awesome.min.css',
+    '@/assets/user/css/style.css',
+    '@/assets/user/css/responsive.css',
+  ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: ['@/plugins/antd-ui', '~/plugins/api'],

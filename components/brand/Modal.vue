@@ -55,6 +55,7 @@ export default {
   },
   methods: {
     show() {
+      this.resetData()
       this.brandID = ''
       this.action = 'create'
       this.title = 'Create brand'
@@ -79,8 +80,8 @@ export default {
           status: result.status,
         }
       } catch (e) {
-        if (e.response) {
-          this.$message.warning(`Error please try agian!`)
+        if (e.response.data) {
+          this.$message.warning(e.response.data.details)
         }
       } finally {
         this.loading = false
@@ -103,25 +104,23 @@ export default {
             },
           })
           this.$message.success(`Add brand Successfully!`)
-          this.brand = {
-            brandName: '',
-            brandCode: '',
-            brandDesc: '',
-            status: 'SHOW',
-          }
         }
-        this.$emit('refreshBrand')
       } catch (e) {
-        if (e.response) {
-          this.$message.warning(`Error please try agian!`)
+        if (e.response.data) {
+          this.$message.warning(e.response.data.details)
         }
       } finally {
         this.confirmLoading = false
         this.visible = false
+        this.resetData()
+        this.$emit('refreshBrand')
       }
     },
     close(e) {
       this.visible = false
+      this.resetData()
+    },
+    resetData() {
       this.brand = {
         brandName: '',
         brandCode: '',

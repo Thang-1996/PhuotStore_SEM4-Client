@@ -7,7 +7,6 @@
       @ok="handleOk"
       @cancel="close"
     >
-      {{ product }}
       <a-spin :spinning="loading">
         <a-form-model
           :model="product"
@@ -127,14 +126,15 @@ export default {
         this.categories = [...categories.content]
         this.brands = [...brands.content]
       } catch (e) {
-        if (e.response) {
-          this.$message.warning(`Error please try agian!`)
+        if (e.response.data) {
+          this.$message.warning(e.response.data.details)
         }
       } finally {
         this.loading = false
       }
     },
     show() {
+      this.resetData()
       this.productID = ''
       this.action = 'create'
       this.title = 'Create Product'
@@ -161,13 +161,13 @@ export default {
           price: result.price,
           createAt: result.createAt,
           updateAt: result.updateAt,
-          brandID: result.brandID,
-          categoryID: result.categoryID,
+          brandID: result.brand.brandID,
+          categoryID: result.category.categoryID,
           status: result.status,
         }
       } catch (e) {
-        if (e.response) {
-          this.$message.warning(`Error please try agian!`)
+        if (e.response.data) {
+          this.$message.warning(e.response.data.details)
         }
       } finally {
         this.loading = false
@@ -177,7 +177,7 @@ export default {
       try {
         this.confirmLoading = true
         if (this.productID !== '') {
-          await this.$api.updateCategory(this.productID, this.product, {
+          await this.$api.updateProduct(this.productID, this.product, {
             headers: {
               Authorization: this.$auth.$storage.getUniversal('token').token,
             },
@@ -190,32 +190,23 @@ export default {
             },
           })
           this.$message.success(`Add Product Successfully!`)
-          this.product = {
-            productName: '',
-            productCode: '',
-            productDesc: '',
-            discount: '',
-            qty: '',
-            price: '',
-            createAt: new Date(),
-            updateAt: new Date(),
-            brandID: '',
-            categoryID: '',
-            status: 'SHOW',
-          }
         }
-        // this.$emit('refreshProduct')
       } catch (e) {
-        if (e.response) {
-          this.$message.warning(`Error please try agian!`)
+        if (e.response.data) {
+          this.$message.warning(e.response.data.details)
         }
       } finally {
         this.confirmLoading = false
         this.visible = false
+        this.resetData()
+        this.$emit('refreshProduct')
       }
     },
     close(e) {
       this.visible = false
+      this.resetData()
+    },
+    resetData() {
       this.product = {
         productName: '',
         productCode: '',

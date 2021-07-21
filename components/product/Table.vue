@@ -52,13 +52,13 @@ const columns = [
   },
   {
     title: 'Category',
-    dataIndex: 'categoryID',
-    key: 'categoryID',
+    dataIndex: 'categoryName',
+    key: 'categoryName',
   },
   {
-    title: 'brandID',
-    dataIndex: 'brandID',
-    key: 'brandID',
+    title: 'Brand',
+    dataIndex: 'brandName',
+    key: 'brandName',
   },
   {
     title: 'Status',

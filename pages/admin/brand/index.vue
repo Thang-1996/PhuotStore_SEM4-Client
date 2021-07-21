@@ -44,7 +44,9 @@ export default {
         this.data = [...result.content]
         this.transformData(this.data)
       } catch (e) {
-        console.log(e)
+        if (e.response.data) {
+          this.$message.warning(e.response.data.details)
+        }
       } finally {
         this.loading = false
       }
@@ -90,8 +92,8 @@ export default {
             })
             this.$message.success(`Delete Successfully!`)
           } catch (e) {
-            if (e.response) {
-              this.$message.warning(`Delete Fail!`)
+            if (e.response.data) {
+              this.$message.warning(e.response.data.details)
             }
           } finally {
             await this.loadPage()

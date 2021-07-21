@@ -10,8 +10,6 @@
         /></a-button>
         <productTable
           :products="products"
-          :categories="categories"
-          :brands="brands"
           @editProduct="editProduct"
           @deleteProduct="deleteProduct"
         />
@@ -27,7 +25,7 @@ export default {
     return {
       visible: false,
       loading: false,
-      brands: [],
+      products: [],
       columns: [],
     }
   },
@@ -44,10 +42,11 @@ export default {
           },
         })
         this.data = [...result.content]
-        console.log(result.content)
         this.transformData(this.data)
       } catch (e) {
-        console.log(e)
+        if (e.response.data) {
+          this.$message.warning(e.response.data.details)
+        }
       } finally {
         this.loading = false
       }
@@ -69,7 +68,10 @@ export default {
           create_at: item.createAt,
           discount: item.discount,
           price: item.price,
-          productimg: item.productImg,
+          brandID: item.brand.brandID,
+          category: item.category.categoryID,
+          brandName: item.brand.brandName,
+          categoryName: item.category.categoryName,
           qty: item.qty,
         }
         acc.push(obj)
@@ -97,8 +99,8 @@ export default {
             })
             this.$message.success(`Delete Successfully!`)
           } catch (e) {
-            if (e.response) {
-              this.$message.warning(`Delete Fail!`)
+            if (e.response.data) {
+              this.$message.warning(e.response.data.details)
             }
           } finally {
             await this.loadPage()
