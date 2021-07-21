@@ -108,6 +108,7 @@ export default {
         this.$auth.$storage.setUniversal('token', {
           token: `${result.tokenType} ${result.accessToken}`,
           roles: result.roles,
+          userID: result.id,
         })
         await this.$router.push('/admin/dashboard')
         this.$message.success(`Successfully Login!`)

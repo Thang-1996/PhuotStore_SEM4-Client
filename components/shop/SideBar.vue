@@ -44,6 +44,7 @@
       <div class="sidebar-widget widget-categories">
         <h5 class="widget-title">Our Categories</h5>
         <ul class="sidebar-widget-list">
+          <li><a @click="getProduct('ALL')"> ALL</a></li>
           <li v-for="(category, index) in categories" :key="index">
             <a @click="getProduct(category.categoryID)">
               {{ category.categoryName }}</a

@@ -51,12 +51,22 @@ export default {
       this.categoryID = id
       try {
         this.loading = true
-        const products = await this.$api.getProductByCategory(id, {
-          headers: {
-            Authorization: this.$auth.$storage.getUniversal('token').token,
-          },
-        })
-        this.products = [...products.content]
+
+        if (id === 'ALL') {
+          const products = await this.$api.productList({
+            headers: {
+              Authorization: this.$auth.$storage.getUniversal('token').token,
+            },
+          })
+          this.products = [...products.content]
+        } else {
+          const products = await this.$api.getProductByCategory(id, {
+            headers: {
+              Authorization: this.$auth.$storage.getUniversal('token').token,
+            },
+          })
+          this.products = [...products.content]
+        }
       } catch (e) {
         if (e.response.data) {
           this.$message.warning(e.response.data.details)
