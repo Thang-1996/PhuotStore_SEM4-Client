@@ -46,8 +46,13 @@ export default function ({ $axios, redirect }, inject) {
       axios.$delete(`api/v1/products/delete/${id}`, config),
     getProductByCategory: (id, config) =>
       axios.$get(`api/v1/products/categories/${id}`, config),
+    // Order API
+    orderList: (config) => axios.$get('api/v1/orders', config),
     orderPlace: (data, config) =>
       axios.$post('api/v1/orders/add/', data, config),
+    getOrder: (id, config) => axios.$get(`api/v1/orders/${id}`, config),
+    updateOrder: (id, data, config) =>
+      axios.$put(`api/v1/orders/update/${id}`, data, config),
   }
   inject('api', api)
 }

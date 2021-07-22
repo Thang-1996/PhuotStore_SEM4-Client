@@ -48,6 +48,12 @@ const sideBar = [
     active: false,
   },
   {
+    path: '/admin/order',
+    name: 'Order',
+    icon: 'shopping',
+    active: false,
+  },
+  {
     path: '/admin/booking',
     name: 'Booking',
     icon: 'calendar',

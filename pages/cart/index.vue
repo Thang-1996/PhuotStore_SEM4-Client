@@ -32,7 +32,7 @@
             </div>
           </td>
           <td data-title="Price">
-            <strong> {{ item.product.price }}$</strong>
+            <strong>{{ formatPrice(item.product.price) }}</strong>
           </td>
           <td class="quantity" data-title="Quantity">
             <input
@@ -42,7 +42,9 @@
             />
           </td>
           <td data-title="Total">
-            <strong>{{ item.product.price * item.quantity }}$</strong>
+            <strong>{{
+              formatPrice(item.product.price * item.quantity)
+            }}</strong>
           </td>
         </tr>
       </tbody>
@@ -85,13 +87,21 @@ export default {
   },
   methods: {
     getCart() {
-      const cart = localStorage.getItem('cart')
-        ? JSON.parse(localStorage.getItem('cart'))
-        : []
-      this.cart = [...cart]
+      if (process.browser) {
+        const cart = localStorage.getItem('cart')
+          ? JSON.parse(localStorage.getItem('cart'))
+          : []
+        this.cart = [...cart]
+      }
     },
     goToCheckOut() {
       this.$router.push('/checkout')
+    },
+    formatPrice(money) {
+      return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+      }).format(money)
     },
   },
 }

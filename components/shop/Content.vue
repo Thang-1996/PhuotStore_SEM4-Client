@@ -45,7 +45,7 @@
               <a href="product-single.html">{{ product.productName }}</a>
             </h5>
             <div class="sigma_product-price">
-              <span>{{ product.price }}$</span>
+              <span>{{ formatPrice(product.price) }}</span>
             </div>
           </div>
         </div>
@@ -80,23 +80,31 @@ export default {
   },
   methods: {
     addToCard(product) {
-      let cart = localStorage.getItem('cart')
-      if (cart === null) cart = []
-      else cart = JSON.parse(cart)
-      let count = 0
-      for (let i = 0; i < cart.length; i++) {
-        if (cart[i].product.productID === product.productID) {
-          if (cart[i].quantity < product.qty) {
-            cart[i].quantity++
+      if (process.browser) {
+        let cart = localStorage.getItem('cart')
+        if (cart === null) cart = []
+        else cart = JSON.parse(cart)
+        let count = 0
+        for (let i = 0; i < cart.length; i++) {
+          if (cart[i].product.productID === product.productID) {
+            if (cart[i].quantity < product.qty) {
+              cart[i].quantity++
+            }
+            count++
           }
-          count++
         }
+        if (count === 0) {
+          cart.push({ product, quantity: 1 })
+        }
+        this.$message.success(`Add To Cart Successfully!`)
+        localStorage.setItem('cart', JSON.stringify(cart))
       }
-      if (count === 0) {
-        cart.push({ product, quantity: 1 })
-      }
-      this.$message.success(`Add To Cart Successfully!`)
-      localStorage.setItem('cart', JSON.stringify(cart))
+    },
+    formatPrice(money) {
+      return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+      }).format(money)
     },
   },
 }

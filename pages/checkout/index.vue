@@ -96,7 +96,9 @@
                 </td>
                 <td data-title="Quantity">{{ item.quantity }}</td>
                 <td data-title="Total">
-                  <strong>{{ item.product.price * item.quantity }}$</strong>
+                  <strong>{{
+                    formatPrice(item.product.price * item.quantity)
+                  }}</strong>
                 </td>
               </tr>
             </tbody>
@@ -106,7 +108,7 @@
               </td>
               <td>{{ billingDetails.totalQuantity }}</td>
               <td>
-                <strong>{{ billingDetails.totalPrice }}$</strong>
+                <strong>{{ formatPrice(billingDetails.totalPrice) }}</strong>
               </td>
             </tr>
           </table>
@@ -230,32 +232,30 @@ export default {
   },
   methods: {
     getCart() {
-      const cart = localStorage.getItem('cart')
-        ? JSON.parse(localStorage.getItem('cart'))
-        : []
-      const user = this.$auth.$storage.getUniversal('token')
-      console.log(user)
-      this.cart = [...cart]
-      cart.forEach((item) => {
-        const itemPer = Number(item.product.price * item.quantity)
-        console.log(itemPer)
-        this.billingDetails.totalQuantity += item.quantity
-        this.billingDetails.totalPrice += itemPer
-        this.billingDetails.product.push(item.product.productID)
-        this.billingDetails.userID =
-          this.$auth.$storage.getUniversal('token').userID
-        this.billingDetails.orderName = generateHash()
-      })
+      if (process.browser) {
+        const cart = localStorage.getItem('cart')
+          ? JSON.parse(localStorage.getItem('cart'))
+          : []
+        const user = this.$auth.$storage.getUniversal('token')
+        this.cart = [...cart]
+        cart.forEach((item) => {
+          const itemPer = Number(item.product.price * item.quantity)
+          this.billingDetails.totalQuantity += item.quantity
+          this.billingDetails.totalPrice += itemPer
+          this.billingDetails.product.push(item.product.productID)
+          this.billingDetails.userID = user.userID
+          this.billingDetails.orderName = generateHash()
+        })
+      }
     },
     async payment() {
       try {
         this.loading = true
-        const result = await this.$api.orderPlace(this.billingDetails, {
+        await this.$api.orderPlace(this.billingDetails, {
           headers: {
             Authorization: this.$auth.$storage.getUniversal('token').token,
           },
         })
-        console.log(result)
       } catch (e) {
         if (e.response.data) {
           this.$message.warning(e.response.data.details)
@@ -266,6 +266,12 @@ export default {
         this.$message.success(`Payment Successfully!`)
         this.$router.push('/')
       }
+    },
+    formatPrice(money) {
+      return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+      }).format(money)
     },
   },
 }
