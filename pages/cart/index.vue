@@ -10,12 +10,13 @@
           <th>Total</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody v-if="cart.length">
         <tr v-for="(item, index) in cart" :key="index">
           <td class="remove">
             <button
               type="button"
               class="close-btn close-danger remove-from-cart"
+              @click="remove(item)"
             >
               <span></span>
               <span></span>
@@ -39,6 +40,7 @@
               v-model="item.quantity"
               type="number"
               class="qty form-control"
+              @change="onChange(item)"
             />
           </td>
           <td data-title="Total">
@@ -48,6 +50,18 @@
           </td>
         </tr>
       </tbody>
+      <span
+        v-else
+        style="
+          margin-top: 20px;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        "
+      >
+        Empty Cart Item
+      </span>
     </table>
     <div class="row">
       <div class="col-lg-5">
@@ -79,7 +93,6 @@ export default {
   data() {
     return {
       cart: [],
-      quantity: '',
     }
   },
   async created() {
@@ -102,6 +115,22 @@ export default {
         style: 'currency',
         currency: 'VND',
       }).format(money)
+    },
+    onChange(item) {
+      ;[...this.cart].map((cart) => {
+        return cart.product.productID === item.product.productID
+      })
+      if (process.browser) {
+        localStorage.setItem('cart', JSON.stringify(this.cart))
+      }
+    },
+    remove(item) {
+      this.cart = [...this.cart].filter((cart) => {
+        return cart.product.productID !== item.product.productID
+      })
+      if (process.browser) {
+        localStorage.setItem('cart', JSON.stringify(this.cart))
+      }
     },
   },
 }

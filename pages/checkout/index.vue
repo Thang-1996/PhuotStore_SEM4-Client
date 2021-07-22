@@ -240,7 +240,7 @@ export default {
         this.cart = [...cart]
         cart.forEach((item) => {
           const itemPer = Number(item.product.price * item.quantity)
-          this.billingDetails.totalQuantity += item.quantity
+          this.billingDetails.totalQuantity += Number(item.quantity)
           this.billingDetails.totalPrice += itemPer
           this.billingDetails.product.push(item.product.productID)
           this.billingDetails.userID = user.userID

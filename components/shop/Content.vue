@@ -2,7 +2,9 @@
   <div class="col-lg-8">
     <!-- Product Count & Orderby Start -->
     <div class="sigma_shop-global">
-      <p>Showing <b>20</b> of <b>320</b> products</p>
+      <p>
+        Showing <b>{{ products.length }}</b> of <b>{{ total }}</b> products
+      </p>
       <a href="#" class="custom-secondary fw-600"
         >Filter <i class="custom-primary far fa-filter ml-2"></i>
       </a>
@@ -71,6 +73,10 @@ export default {
     products: {
       type: Array,
       default: () => [],
+    },
+    total: {
+      type: Number,
+      default: () => 0,
     },
   },
   data() {

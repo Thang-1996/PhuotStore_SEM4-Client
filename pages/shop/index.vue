@@ -1,7 +1,7 @@
 <template>
   <a-spin :spinning="loading">
     <div class="row">
-      <shopContent :products="products" />
+      <shopContent :products="products" :total="total" />
       <shopSideBar :categories="categories" @getProduct="getProduct" />
     </div>
   </a-spin>
@@ -16,6 +16,7 @@ export default {
       products: [],
       categoryID: '',
       loading: false,
+      total: 0,
     }
   },
   async created() {
@@ -38,6 +39,7 @@ export default {
             },
           })
           this.products = [...products.content]
+          this.total = products.content.length
         }
       } catch (e) {
         if (e.response.data) {

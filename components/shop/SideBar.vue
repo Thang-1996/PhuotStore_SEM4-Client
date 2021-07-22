@@ -1,6 +1,19 @@
 <template>
   <div class="col-lg-4">
     <div class="sidebar">
+      <!-- Tags Start -->
+      <div class="sidebar-widget widget-categories">
+        <h5 class="widget-title">Our Categories</h5>
+        <ul class="sidebar-widget-list">
+          <li><a @click="getProduct('ALL')"> ALL</a></li>
+          <li v-for="(category, index) in categories" :key="index">
+            <a @click="getProduct(category.categoryID)">
+              {{ category.categoryName }}</a
+            >
+          </li>
+        </ul>
+      </div>
+      <!-- Tags End -->
       <!-- Search Start -->
       <div class="sidebar-widget widget-search">
         <h6 class="widget-title">Search</h6>
@@ -38,33 +51,6 @@
           data-postfix=" $"
         />
       </div>
-      <!-- Filter: Price End -->
-
-      <!-- Tags Start -->
-      <div class="sidebar-widget widget-categories">
-        <h5 class="widget-title">Our Categories</h5>
-        <ul class="sidebar-widget-list">
-          <li><a @click="getProduct('ALL')"> ALL</a></li>
-          <li v-for="(category, index) in categories" :key="index">
-            <a @click="getProduct(category.categoryID)">
-              {{ category.categoryName }}</a
-            >
-          </li>
-        </ul>
-      </div>
-      <!-- Tags End -->
-
-      <!-- Ad banner Start -->
-      <div class="sidebar-widget widget-ad p-0 border-0">
-        <a href="#">
-          <img src="assets/img/blog/ad.jpg" alt="ad" />
-          <div>
-            <span>Add a Custom Text</span>
-            Add Banner here
-          </div>
-        </a>
-      </div>
-      <!-- Ad banner End -->
     </div>
   </div>
 </template>
