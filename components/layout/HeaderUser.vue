@@ -61,7 +61,8 @@
               <li>
                 <nuxt-link to="/cart" class="d-none d-lg-block sigma_btn-custom"
                   >Cart
-                  <i class="far fa-shopping-basket"></i>
+
+                  <i class="far fa-shopping-basket" style="font-size: 24px"></i>
                 </nuxt-link>
               </li>
 

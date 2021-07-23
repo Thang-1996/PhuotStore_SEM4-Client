@@ -105,7 +105,7 @@ export default {
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ['@/plugins/antd-ui', '~/plugins/api'],
+  plugins: ['@/plugins/antd-ui', '~/plugins/api', '~/plugins/firebase'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -132,6 +132,13 @@ export default {
   env: {
     baseUrl: 'https://phuotstoreapiv1.herokuapp.com',
     ROOT_DOMAIN: 'user',
+    API_KEY: 'AIzaSyCgvK5-zVhm5aBnrVClBaAk9o7RaiDdiAI',
+    AUTH_DOMAIN: 'phuotstore.firebaseapp.com',
+    PROJECT_ID: 'phuotstore',
+    STORAGE_BUCKET: 'phuotstore.appspot.com',
+    MESSAGING_SENDER_ID: '917875276169',
+    APP_ID: '1:917875276169:web:64c4ae86df3e86fee8c958',
+    MESUREMENT_ID: 'G-39K8N6F8TG',
   },
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {},

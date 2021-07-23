@@ -19,9 +19,9 @@
       >
         <div class="sigma_product">
           <div class="sigma_product-thumb">
-            <a href="product-single.html"
+            <nuxt-link :to="{ path: `/shop/${product.productID}` }"
               ><img src="assets/img/products/0.jpg" alt="product"
-            /></a>
+            /></nuxt-link>
             <div class="sigma_product-controls">
               <a href="#" data-toggle="tooltip" title="Wishlist">
                 <i class="far fa-heart"></i>
@@ -44,7 +44,9 @@
           </div>
           <div class="sigma_product-body">
             <h5 class="sigma_product-title">
-              <a href="product-single.html">{{ product.productName }}</a>
+              <nuxt-link :to="{ path: `/shop/${product.productID}` }">{{
+                product.productName
+              }}</nuxt-link>
             </h5>
             <div class="sigma_product-price">
               <span>{{ formatPrice(product.price) }}</span>
@@ -104,6 +106,7 @@ export default {
         }
         this.$message.success(`Add To Cart Successfully!`)
         localStorage.setItem('cart', JSON.stringify(cart))
+        this.$store.dispatch('setCount', cart.length)
       }
     },
     formatPrice(money) {

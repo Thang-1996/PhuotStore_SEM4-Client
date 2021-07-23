@@ -40,6 +40,16 @@
           <a-form-model-item label="Product Price">
             <a-input v-model="product.price" placeholder="Enter Price" />
           </a-form-model-item>
+          <!--          <a-form-model-item label="Product Image">-->
+          <!--            <a-upload-->
+          <!--              name="file"-->
+          <!--              accept="image/*"-->
+          <!--              :multiple="true"-->
+          <!--              @change="handleChange"-->
+          <!--            >-->
+          <!--              <a-button> <a-icon type="upload" /> Select Images </a-button>-->
+          <!--            </a-upload>-->
+          <!--          </a-form-model-item>-->
           <a-form-model-item label="Category">
             <a-select
               v-model="product.categoryID"
@@ -90,8 +100,11 @@ export default {
       action: '',
       categories: [],
       brands: [],
+      fileList: [],
+      fileURL: [],
       product: {
         productName: '',
+        // images: [],
         productCode: '',
         productDesc: '',
         discount: '',
@@ -184,6 +197,8 @@ export default {
           })
           this.$message.success(`Update Product Successfully!`)
         } else {
+          // this.uploadImage()
+          // this.product.images = [...this.fileURL]
           await this.$api.addProduct(this.product, {
             headers: {
               Authorization: this.$auth.$storage.getUniversal('token').token,
@@ -199,12 +214,14 @@ export default {
         this.confirmLoading = false
         this.visible = false
         this.resetData()
+        // this.fileURL = []
         this.$emit('refreshProduct')
       }
     },
     close(e) {
       this.visible = false
       this.resetData()
+      // this.fileURL = []
     },
     resetData() {
       this.product = {
@@ -212,6 +229,7 @@ export default {
         productCode: '',
         productDesc: '',
         discount: '',
+        // images: [],
         qty: '',
         price: '',
         createAt: new Date(),
@@ -221,6 +239,26 @@ export default {
         status: 'SHOW',
       }
     },
+    // handleChange(info) {
+    //   if (info.file.status !== 'uploading') {
+    //     this.fileList = [...info.fileList]
+    //   }
+    //   if (info.file.status === 'done') {
+    //     this.$message.success(`Add Image Successfully!`)
+    //   }
+    // },
+    // uploadImage() {
+    //   this.fileList.forEach((item) => {
+    //     const fileRef = this.$fire
+    //       .storage()
+    //       .ref()
+    //       .child(`images/${item.originFileObj.name}`)
+    //     fileRef.put(item.originFileObj)
+    //     fileRef.getDownloadURL().then((url) => {
+    //       this.fileURL.push(url)
+    //     })
+    //   })
+    // },
   },
 }
 </script>
