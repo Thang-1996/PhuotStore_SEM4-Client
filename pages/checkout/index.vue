@@ -248,7 +248,16 @@ export default {
         })
       }
     },
-    async payment() {
+    payment() {
+      this.$confirm({
+        title: 'Are you sure to order ? ',
+        content: 'Please check the billing information before order ?',
+        okText: 'Submit',
+        cancelText: 'Cancel',
+        onOk: this.checkout,
+      })
+    },
+    async checkout() {
       try {
         this.loading = true
         await this.$api.orderPlace(this.billingDetails, {

@@ -186,7 +186,14 @@ export default {
         this.loading = false
       }
     },
-    async handleOk(e) {
+    handleOk(e) {
+      this.$confirm({
+        title: 'Update Order ? ',
+        content: 'Do you sure want to update order ? ',
+        onOk: () => this.updateOrder(),
+      })
+    },
+    async updateOrder() {
       try {
         this.confirmLoading = true
         await this.$api.updateOrder(this.orderID, this.orderUpdate, {
