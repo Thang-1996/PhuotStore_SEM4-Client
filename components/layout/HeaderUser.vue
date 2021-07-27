@@ -16,14 +16,24 @@
             </li>
           </ul>
           <ul class="sigma_sm">
-            <li>
-              <a href="#"> <i class="fab fa-facebook-f"></i> </a>
+            <li v-if="userName !== ''">
+              <i
+                style="color: #d48459; cursor: pointer"
+                class="far fa-user"
+              ></i>
+              <span style="color: #d48459; cursor: pointer">{{
+                userName
+              }}</span>
+              <i
+                style="color: #d48459; cursor: pointer"
+                class="fas fa-sign-out-alt"
+                @click="logout"
+              ></i>
             </li>
-            <li>
-              <a href="#"> <i class="fab fa-twitter"></i> </a>
-            </li>
-            <li>
-              <a href="#"> <i class="fab fa-instagram"></i> </a>
+            <li v-else>
+              <nuxt-link to="/login"
+                ><i class="far fa-sign-in-alt"></i> Login
+              </nuxt-link>
             </li>
           </ul>
         </div>
@@ -103,6 +113,20 @@ export default {
         },
       ],
     }
+  },
+  computed: {
+    userName() {
+      return this.$auth.$storage.getUniversal('token').username
+        ? this.$auth.$storage.getUniversal('token').username
+        : ''
+    },
+  },
+  methods: {
+    async logout() {
+      this.$auth.$storage.removeUniversal('token')
+      this.$message.success(`Successfully Logout !`)
+      await this.$router.push('/login')
+    },
   },
 }
 </script>

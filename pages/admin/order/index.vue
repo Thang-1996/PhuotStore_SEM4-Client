@@ -44,11 +44,49 @@ export default {
         this.loading = false
       }
     },
-    search(obj) {
-      const data = [...this.data].filter((item) => {
-        return item.firstName.toLowerCase().includes(obj.search.toLowerCase())
-      })
-      this.transformData(data)
+    async search(obj) {
+      if (obj.typeSearch === 'search') {
+        this.loading = true
+        setTimeout(() => {
+          const data = [...this.data].filter((item) => {
+            return (
+              item.firstName.toLowerCase().includes(obj.search.toLowerCase()) ||
+              item.orderName.toLowerCase().includes(obj.search.toLowerCase()) ||
+              item.shippingAddress
+                .toLowerCase()
+                .includes(obj.search.toLowerCase()) ||
+              item.phone.toLowerCase().includes(obj.search.toLowerCase()) ||
+              item.lastName.toLowerCase().includes(obj.search.toLowerCase()) ||
+              item.email.toLowerCase().includes(obj.search.toLowerCase()) ||
+              item.note.toLowerCase().includes(obj.search.toLowerCase())
+            )
+          })
+          this.transformData(data)
+          this.loading = false
+        }, 1000)
+      } else if (obj.status !== '' && obj.typeSearch !== 'search') {
+        try {
+          this.loading = true
+          const data = await this.$api.filterOrderByStatus(obj.status, {
+            headers: {
+              Authorization: this.$auth.$storage.getUniversal('token').token,
+            },
+          })
+          this.transformData(data.content)
+        } catch (e) {
+          if (e.response.data) {
+            this.$message.warning(e.response.data.details)
+          }
+        } finally {
+          this.loading = false
+        }
+      } else {
+        this.loading = true
+        setTimeout(() => {
+          this.transformData(this.data)
+          this.loading = false
+        }, 1000)
+      }
     },
     transformData(data) {
       this.orders = [...data].reduce((acc, item, index) => {

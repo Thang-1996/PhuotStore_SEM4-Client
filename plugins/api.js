@@ -53,6 +53,8 @@ export default function ({ $axios, redirect }, inject) {
     getOrder: (id, config) => axios.$get(`api/v1/orders/${id}`, config),
     updateOrder: (id, data, config) =>
       axios.$put(`api/v1/orders/update/${id}`, data, config),
+    filterOrderByStatus: (status, config) =>
+      axios.$get(`api/v1/orders/${status}`, config),
   }
   inject('api', api)
 }

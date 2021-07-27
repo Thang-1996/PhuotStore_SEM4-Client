@@ -105,10 +105,12 @@ export default {
       try {
         this.loading = true
         const result = await this.$api.login(user)
+        console.log(result)
         this.$auth.$storage.setUniversal('token', {
           token: `${result.tokenType} ${result.accessToken}`,
           roles: result.roles,
           userID: result.id,
+          username: result.username,
         })
         await this.$router.push('/admin/dashboard')
         this.$message.success(`Successfully Login!`)
