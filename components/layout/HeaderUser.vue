@@ -20,6 +20,7 @@
               <i
                 style="color: #d48459; cursor: pointer"
                 class="far fa-user"
+                @click="goProfile"
               ></i>
               <span style="color: #d48459; cursor: pointer">{{
                 userName
@@ -120,12 +121,20 @@ export default {
         ? this.$auth.$storage.getUniversal('token').username
         : ''
     },
+    userID() {
+      return this.$auth.$storage.getUniversal('token').userID
+        ? this.$auth.$storage.getUniversal('token').userID
+        : ''
+    },
   },
   methods: {
     async logout() {
       this.$auth.$storage.removeUniversal('token')
       this.$message.success(`Successfully Logout !`)
       await this.$router.push('/login')
+    },
+    goProfile() {
+      this.$router.push({ name: 'profile', params: { id: this.userID } })
     },
   },
 }

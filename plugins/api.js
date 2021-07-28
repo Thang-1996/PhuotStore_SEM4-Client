@@ -18,6 +18,9 @@ export default function ({ $axios, redirect }, inject) {
     // Auth API
     login: (data) => axios.$post('/api/v1/auth/signin', data),
     register: (data) => axios.$post('/api/v1/auth/signup', data),
+    getUser: (id, config) => axios.$get(`/api/v1/users/${id}`, config),
+    updateUser: (id, data, config) =>
+      axios.$put(`api/v1/users/update/${id}`, data, config),
     // Category API
     categoryList: (config) => axios.$get('api/v1/categories', config),
     addCategory: (data, config) =>
@@ -55,6 +58,8 @@ export default function ({ $axios, redirect }, inject) {
       axios.$put(`api/v1/orders/update/${id}`, data, config),
     filterOrderByStatus: (status, config) =>
       axios.$get(`api/v1/orders/${status}`, config),
+    getOrderByUser: (id, config) =>
+      axios.$get(`api/v1/orders/user/${id}`, config),
   }
   inject('api', api)
 }

@@ -169,6 +169,8 @@ export default {
           paymentType: result.paymentType,
           totalPrice: result.totalPrice,
           status: result.status,
+          createAt: result.createAt,
+          updateAt: new Date(),
         }
         if (
           result.status === 'CONFIRM' ||
