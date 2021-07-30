@@ -6,27 +6,27 @@
           <h4>Billing Details</h4>
           <div class="row">
             <div class="form-group col-xl-6">
-              <label>First Name <span class="text-danger">*</span></label>
+              <label>Name <span class="text-danger">*</span></label>
               <input
                 v-model="billingDetails.firstName"
                 type="text"
-                placeholder="First Name"
+                placeholder="Name"
                 name="fname"
                 class="form-control"
                 required=""
               />
             </div>
-            <div class="form-group col-xl-6">
-              <label>Last Name <span class="text-danger">*</span></label>
-              <input
-                v-model="billingDetails.lastName"
-                type="text"
-                placeholder="Last Name"
-                name="lname"
-                class="form-control"
-                required=""
-              />
-            </div>
+            <!--            <div class="form-group col-xl-6">-->
+            <!--              <label>Last Name <span class="text-danger">*</span></label>-->
+            <!--              <input-->
+            <!--                v-model="billingDetails.lastName"-->
+            <!--                type="text"-->
+            <!--                placeholder="Last Name"-->
+            <!--                name="lname"-->
+            <!--                class="form-control"-->
+            <!--                required=""-->
+            <!--              />-->
+            <!--            </div>-->
             <div class="form-group col-xl-6">
               <label>Phone Number <span class="text-danger">*</span></label>
               <input
@@ -209,6 +209,7 @@ export default {
       loading: false,
       cart: [],
       grandTotal: 0,
+      user: {},
       billingDetails: {
         orderName: '',
         note: '',
@@ -227,12 +228,42 @@ export default {
       },
     }
   },
+  computed: {
+    userID() {
+      return this.$auth.$storage.getUniversal('token').userID
+        ? this.$auth.$storage.getUniversal('token').userID
+        : ''
+    },
+  },
   async created() {
     await this.getCart()
   },
   methods: {
-    getCart() {
+    async getUserInfo() {
+      this.loading = true
+      try {
+        const result = await this.$api.getUser(this.userID, {
+          headers: {
+            Authorization: this.$auth.$storage.getUniversal('token').token,
+          },
+        })
+        this.user = result
+        console.log(this.user)
+      } catch (e) {
+        if (e.response.data) {
+          this.$message.warning(e.response.data.details)
+        }
+      } finally {
+        this.loading = false
+      }
+    },
+    async getCart() {
       if (process.browser) {
+        await this.getUserInfo()
+        this.billingDetails.firstName = this.user.username
+        this.billingDetails.shippingAddress = this.user.address
+        this.billingDetails.phone = this.user.phone
+        this.billingDetails.email = this.user.email
         const cart = localStorage.getItem('cart')
           ? JSON.parse(localStorage.getItem('cart'))
           : []

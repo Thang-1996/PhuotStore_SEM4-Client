@@ -124,10 +124,14 @@ export default {
       },
     }
   },
+  // watch: {
+  //   fileList(newValue) {
+  //     console.log(newValue)
+  //   },
+  // },
   async created() {
     await this.getData()
   },
-
   methods: {
     async getData() {
       try {
@@ -228,6 +232,8 @@ export default {
       this.visible = false
       this.resetData()
       // this.fileURL = []
+      // this.fileList = []
+      // localStorage.removeItem('images')
     },
     resetData() {
       this.product = {
@@ -262,6 +268,13 @@ export default {
     //     fileRef.put(item.originFileObj)
     //     fileRef.getDownloadURL().then((url) => {
     //       this.fileURL.push(url)
+    //       console.log(this.fileURL)
+    //       if (process.browser) {
+    //         localStorage.setItem('images', JSON.stringify(this.fileURL))
+    //         this.product.images = localStorage.getItem('images')
+    //           ? localStorage.getItem('images')
+    //           : []
+    //       }
     //     })
     //   })
     // },

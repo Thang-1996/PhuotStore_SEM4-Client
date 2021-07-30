@@ -20,28 +20,34 @@
                 WAITING
               </a-radio>
               <a-radio
-                :disabled="isCanChange"
+                :disabled="
+                  order &&
+                  (order.status === 'DONE' || order.status === 'CANCEL')
+                "
                 value="SHIPPING"
                 style="color: purple"
               >
                 SHIPPING
               </a-radio>
               <a-radio
-                :disabled="isCanChange"
+                :disabled="
+                  order &&
+                  (order.status === 'SHIPPING' ||
+                    order.status === 'CANCEL' ||
+                    order.status === 'DONE')
+                "
                 value="CONFIRM"
                 style="color: #5d91ff"
               >
                 CONFIRM
               </a-radio>
               <a-radio
-                :disabled="isCanChange"
-                value="DONE"
-                style="color: green"
-              >
-                DONE
-              </a-radio>
-              <a-radio
-                :disabled="isCanChange"
+                :disabled="
+                  order &&
+                  (order.status === 'SHIPPING' ||
+                    order.status === 'CONFIRM' ||
+                    order.status === 'DONE')
+                "
                 value="CANCEL"
                 style="color: red"
               >
@@ -171,13 +177,6 @@ export default {
           status: result.status,
           createAt: result.createAt,
           updateAt: new Date(),
-        }
-        if (
-          result.status === 'CONFIRM' ||
-          result.status === 'DONE' ||
-          result.status === 'CANCEL'
-        ) {
-          this.isCanChange = true
         }
         this.status = result.status
       } catch (e) {

@@ -63,6 +63,11 @@
         Empty Cart Item
       </span>
     </table>
+    <!--    <div class="row">-->
+    <!--      <div class="col-lg-6">-->
+    <!--        <a-range-picker @change="onChange" />-->
+    <!--      </div>-->
+    <!--    </div>-->
     <div class="row">
       <div class="col-lg-5">
         <div class="form-group mb-0">
@@ -79,7 +84,7 @@
                 type="button"
                 @click="goToCheckOut()"
               >
-                Apply
+                CheckOut
               </button>
             </div>
           </div>
