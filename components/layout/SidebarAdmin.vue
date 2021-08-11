@@ -54,8 +54,8 @@ const sideBar = [
     active: false,
   },
   {
-    path: '/admin/booking',
-    name: 'Booking',
+    path: '/admin/rent',
+    name: 'Order Rent',
     icon: 'calendar',
     active: false,
   },

@@ -3,8 +3,20 @@
     <form method="post">
       <div class="row">
         <div class="col-xl-7">
-          <h4>Billing Details</h4>
+          <h4 v-if="rentDate">Rent Details</h4>
+          <h4 v-else>Pay Details</h4>
           <div class="row">
+            <div v-if="rentDate" class="form-group col-xl-12">
+              <label>Rent Time <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                :placeholder="`From Date :  ${rentDate.startDate}   -   To Date :  ${rentDate.endDate}      |        ${calcDayRent} Day Rent`"
+                name="fname"
+                class="form-control"
+                required=""
+                readonly
+              />
+            </div>
             <div class="form-group col-xl-6">
               <label>Name <span class="text-danger">*</span></label>
               <input
@@ -16,17 +28,6 @@
                 required=""
               />
             </div>
-            <!--            <div class="form-group col-xl-6">-->
-            <!--              <label>Last Name <span class="text-danger">*</span></label>-->
-            <!--              <input-->
-            <!--                v-model="billingDetails.lastName"-->
-            <!--                type="text"-->
-            <!--                placeholder="Last Name"-->
-            <!--                name="lname"-->
-            <!--                class="form-control"-->
-            <!--                required=""-->
-            <!--              />-->
-            <!--            </div>-->
             <div class="form-group col-xl-6">
               <label>Phone Number <span class="text-danger">*</span></label>
               <input
@@ -104,7 +105,7 @@
             </tbody>
             <tr class="total">
               <td>
-                <h6 class="mb-0">Grand Total</h6>
+                <h6 class="mb-0">Grand Total {{ calcUSD }}</h6>
               </td>
               <td>{{ billingDetails.totalQuantity }}</td>
               <td>
@@ -137,54 +138,21 @@
             <label style="margin-left: 10px">ONLINE</label>
           </div>
           <div v-if="billingDetails.paymentType !== 'PAYNOW'">
-            <div class="form-group">
-              <label>Card Number</label>
-              <input
-                type="text"
-                class="form-control"
-                name="master-number"
-                placeholder="Card Number"
-                value=""
-              />
-            </div>
-            <div class="form-group">
-              <label>Full Name</label>
-              <input
-                type="text"
-                class="form-control"
-                name="master-name"
-                placeholder="Full Name"
-                value=""
-              />
-            </div>
-            <div class="row">
-              <div class="col-xl-6 form-group">
-                <label>Expiry Date</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  name="master-expiry"
-                  placeholder="Expiry Date (MM/YY)"
-                  value=""
-                />
-              </div>
-              <div class="col-xl-6 form-group">
-                <label>CVV*</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  name="master-cvv"
-                  placeholder="CVV"
-                  value=""
-                />
-              </div>
-            </div>
-
-            <p class="small">
-              Your personal data will be used to process your order, support
-              your experience throughout this website, and for other purposes
-              described in our <a class="btn-link" href="#">privacy policy.</a>
-            </p>
+            <no-ssr>
+              <paypal-checkout
+                env="sandbox"
+                :amount="calcUSD.toString()"
+                currency="USD"
+                locale="en_US"
+                :button-style="myStyle"
+                :client="paypal"
+                :invoice-number="
+                  billingDetails.orderName || billingDetails.orderRentName
+                "
+              >
+                >
+              </paypal-checkout>
+            </no-ssr>
           </div>
           <button
             type="button"
@@ -202,6 +170,7 @@
 
 <script>
 import { generateHash } from 'random-hash'
+
 export default {
   name: 'index.vue',
   data() {
@@ -226,12 +195,39 @@ export default {
         product: [],
         combo: [],
       },
+      myItems: [],
+      paypal: {
+        sandbox:
+          'AWz5WR3B6eRDLTiOv8l4tfCCJsPnAPgQwuhEjwSGwKDe4FBxGwhLOVfacgtI9Lvgi83mXDRnpcC7goQg',
+      },
+      myStyle: {
+        label: 'checkout',
+        size: 'responsive',
+        shape: 'pill',
+        color: 'gold',
+      },
     }
   },
   computed: {
     userID() {
       return this.$auth.$storage.getUniversal('token').userID
         ? this.$auth.$storage.getUniversal('token').userID
+        : ''
+    },
+    calcUSD() {
+      return this.billingDetails.totalPrice > 0
+        ? `${Math.round(Number(this.billingDetails.totalPrice) / 23000)}`
+        : 1
+    },
+    rentDate() {
+      return this.$route.params.rentDate ? this.$route.params.rentDate : ''
+    },
+    calcDayRent() {
+      return this.$route.params.rentDate
+        ? this.$moment(this.$route.params.rentDate.endDate).diff(
+            this.$moment(this.$route.params.rentDate.startDate),
+            'days'
+          )
         : ''
     },
   },
@@ -248,7 +244,6 @@ export default {
           },
         })
         this.user = result
-        console.log(this.user)
       } catch (e) {
         if (e.response.data) {
           this.$message.warning(e.response.data.details)
@@ -276,7 +271,16 @@ export default {
           this.billingDetails.product.push(item.product.productID)
           this.billingDetails.userID = user.userID
           this.billingDetails.orderName = generateHash()
+          const paypalItem = {
+            name: item.product.productName,
+            description: item.product.productDesc,
+            quantity: item.quantity,
+            price: Math.round(item.product.price / 23000).toString(),
+            currency: 'USD',
+          }
+          this.myItems.push({ ...paypalItem })
         })
+        console.log(this.myItems)
       }
     },
     payment() {
@@ -291,11 +295,25 @@ export default {
     async checkout() {
       try {
         this.loading = true
-        await this.$api.orderPlace(this.billingDetails, {
-          headers: {
-            Authorization: this.$auth.$storage.getUniversal('token').token,
-          },
-        })
+        if (this.rentDate) {
+          delete this.billingDetails.orderName
+          this.billingDetails.orderRentName = generateHash()
+          this.billingDetails.rentalStart = this.rentDate.startDate
+          this.billingDetails.rentalEnd = this.rentDate.endDate
+          this.billingDetails.rental = this.calcDayRent
+          this.billingDetails.bookingDate = this.rentDate.startDate
+          await this.$api.rentPlace(this.billingDetails, {
+            headers: {
+              Authorization: this.$auth.$storage.getUniversal('token').token,
+            },
+          })
+        } else {
+          await this.$api.orderPlace(this.billingDetails, {
+            headers: {
+              Authorization: this.$auth.$storage.getUniversal('token').token,
+            },
+          })
+        }
       } catch (e) {
         if (e.response.data) {
           this.$message.warning(e.response.data.details)
@@ -304,6 +322,7 @@ export default {
         localStorage.removeItem('cart')
         this.loading = false
         this.$message.success(`Payment Successfully!`)
+        this.resetBilling()
         this.$router.push('/')
       }
     },
@@ -312,6 +331,24 @@ export default {
         style: 'currency',
         currency: 'VND',
       }).format(money)
+    },
+    resetBilling() {
+      this.billingDetails = {
+        orderName: '',
+        note: '',
+        status: 'WAITING',
+        totalQuantity: 0,
+        totalPrice: 0,
+        firstName: '',
+        lastName: '',
+        email: '',
+        shippingAddress: '',
+        paymentType: 'PAYNOW',
+        phone: '',
+        userID: '',
+        product: [],
+        combo: [],
+      }
     },
   },
 }

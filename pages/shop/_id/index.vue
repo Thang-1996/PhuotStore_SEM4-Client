@@ -4,26 +4,12 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-5 col-md-6">
-            <div class="sigma_product-single-thumb mb-lg-30">
-              <div class="slider">
-                <img src="assets/img/products/new/0.jpg" alt="product" />
-                <img src="assets/img/products/new/1.jpg" alt="product" />
-                <img src="assets/img/products/new/2.jpg" alt="product" />
-                <img src="assets/img/products/new/3.jpg" alt="product" />
-              </div>
-              <div class="slider-nav">
-                <img src="assets/img/products/0.jpg" alt="product" />
-                <img src="assets/img/products/1.jpg" alt="product" />
-                <img src="assets/img/products/2.jpg" alt="product" />
-                <img src="assets/img/products/3.jpg" alt="product" />
-              </div>
-            </div>
+            <img src="assets/img/products/0.jpg" alt="product" />
           </div>
           <div class="col-lg-7 col-md-6">
             <div class="sigma_product-single-content">
               <div class="sigma_product-price">
-                <span>352$</span>
-                <span>245$</span>
+                <span> {{ product ? formatPrice(product.price) : '' }}</span>
               </div>
               <div class="sigma_rating-wrapper">
                 <div class="sigma_rating">
@@ -162,6 +148,12 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    formatPrice(money) {
+      return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+      }).format(money)
     },
     addToCard(product) {
       if (process.browser) {

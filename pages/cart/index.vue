@@ -69,7 +69,23 @@
     <!--      </div>-->
     <!--    </div>-->
     <div class="row">
-      <div class="col-lg-5">
+      <div class="col-lg-6">
+        <div class="form-group mb-0">
+          <div class="input-group mb-0">
+            <div class="input-group-append">
+              <a-range-picker @change="onDateChange" />
+              <button
+                class="sigma_btn-custom shadow-none"
+                type="button"
+                @click="goToCheckOutRent()"
+              >
+                Rent Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6" style="display: flex; justify-content: flex-end">
         <div class="form-group mb-0">
           <div class="input-group mb-0">
             <input
@@ -84,7 +100,7 @@
                 type="button"
                 @click="goToCheckOut()"
               >
-                CheckOut
+                Pay Now
               </button>
             </div>
           </div>
@@ -98,6 +114,7 @@ export default {
   data() {
     return {
       cart: [],
+      rentDate: {},
     }
   },
   async created() {
@@ -115,6 +132,12 @@ export default {
     goToCheckOut() {
       this.$router.push('/checkout')
     },
+    goToCheckOutRent() {
+      this.$router.push({
+        name: 'checkout',
+        params: { rentDate: this.rentDate },
+      })
+    },
     formatPrice(money) {
       return new Intl.NumberFormat('vi-VN', {
         style: 'currency',
@@ -129,6 +152,10 @@ export default {
         localStorage.setItem('cart', JSON.stringify(this.cart))
       }
     },
+    onDateChange(date, dateString) {
+      this.rentDate.startDate = dateString[0]
+      this.rentDate.endDate = dateString[1]
+    },
     remove(item) {
       this.cart = [...this.cart].filter((cart) => {
         return cart.product.productID !== item.product.productID
@@ -140,3 +167,9 @@ export default {
   },
 }
 </script>
+<style lang="scss">
+.ant-calendar-picker-input {
+  height: 59px;
+  border: 1px solid #d48459;
+}
+</style>

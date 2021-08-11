@@ -1,5 +1,6 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
+  ssr: 'false',
   head: {
     title: 'Phượt Store',
     meta: [
@@ -105,7 +106,12 @@ export default {
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ['@/plugins/antd-ui', '~/plugins/api', '~/plugins/firebase'],
+  plugins: [
+    '@/plugins/antd-ui',
+    '~/plugins/api',
+    '~/plugins/firebase',
+    { src: '~/plugins/paypal.js', ssr: false },
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -114,6 +120,7 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/eslint
     '@nuxtjs/eslint-module',
+    '@nuxtjs/moment',
     // https://go.nuxtjs.dev/stylelint
     '@nuxtjs/stylelint-module',
   ],

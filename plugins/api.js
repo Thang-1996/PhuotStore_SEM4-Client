@@ -60,6 +60,16 @@ export default function ({ $axios, redirect }, inject) {
       axios.$get(`api/v1/orders/${status}`, config),
     getOrderByUser: (id, config) =>
       axios.$get(`api/v1/orders/user/${id}`, config),
+    rentList: (config) => axios.$get('api/v1/orderRents', config),
+    getRent: (id, config) => axios.$get(`api/v1/orderRents/${id}`, config),
+    filterRentByStatus: (status, config) =>
+      axios.$get(`api/v1/orderRents/${status}`, config),
+    getRentByUser: (id, config) =>
+      axios.$get(`api/v1/orderRents/user/${id}`, config),
+    updateRent: (id, data, config) =>
+      axios.$put(`api/v1/orderRents/update/${id}`, data, config),
+    rentPlace: (data, config) =>
+      axios.$post('api/v1/orderRents/add/', data, config),
   }
   inject('api', api)
 }
