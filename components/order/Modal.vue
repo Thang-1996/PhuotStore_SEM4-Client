@@ -22,16 +22,6 @@
               <a-radio
                 :disabled="
                   order &&
-                  (order.status === 'DONE' || order.status === 'CANCEL')
-                "
-                value="SHIPPING"
-                style="color: purple"
-              >
-                SHIPPING
-              </a-radio>
-              <a-radio
-                :disabled="
-                  order &&
                   (order.status === 'SHIPPING' ||
                     order.status === 'CANCEL' ||
                     order.status === 'DONE')
@@ -40,6 +30,16 @@
                 style="color: #5d91ff"
               >
                 CONFIRM
+              </a-radio>
+              <a-radio
+                :disabled="
+                  order &&
+                  (order.status === 'DONE' || order.status === 'CANCEL')
+                "
+                value="SHIPPING"
+                style="color: purple"
+              >
+                SHIPPING
               </a-radio>
               <a-radio
                 :disabled="

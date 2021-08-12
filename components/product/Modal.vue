@@ -50,6 +50,7 @@
             <a-upload
               name="file"
               accept="image/*"
+              :file-list="fileList"
               :multiple="true"
               @change="handleChange"
             >
@@ -187,6 +188,7 @@ export default {
           createAt: result.createAt,
           updateAt: result.updateAt,
           brandID: result.brand.brandID,
+          rental: result.rental,
           categoryID: result.category.categoryID,
           status: result.status,
         }
@@ -229,6 +231,7 @@ export default {
         this.visible = false
         this.resetData()
         this.fileURL = []
+        this.fileList = []
         this.$emit('refreshProduct')
       }
     },
@@ -254,13 +257,8 @@ export default {
         status: 'SHOW',
       }
     },
-    handleChange(info) {
-      if (info.file.status !== 'uploading') {
-        this.fileList = [...info.fileList]
-      }
-      if (info.file.status === 'done') {
-        this.$message.success(`Add Image Successfully!`)
-      }
+    handleChange({ fileList }) {
+      this.fileList = fileList
     },
     uploadImage() {
       this.fileList.forEach((item) => {
