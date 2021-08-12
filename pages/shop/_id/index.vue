@@ -4,10 +4,20 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-5 col-md-6">
-            <img src="assets/img/products/0.jpg" alt="product" />
+            <div class="sigma_product-single-thumb mb-lg-30">
+              <div class="slider-nav">
+                <img
+                  :src="images !== undefined ? JSON.parse(images)[0] : ''"
+                  alt="product"
+                />
+              </div>
+            </div>
           </div>
           <div class="col-lg-7 col-md-6">
             <div class="sigma_product-single-content">
+              <div class="sigma_product-price">
+                <span> {{ product ? product.productName : '' }}</span>
+              </div>
               <div class="sigma_product-price">
                 <span> {{ product ? formatPrice(product.price) : '' }}</span>
               </div>
@@ -127,6 +137,11 @@ export default {
       product: {},
       quantity: 1,
     }
+  },
+  computed: {
+    images() {
+      return this.product.images
+    },
   },
   async created() {
     await this.loadPage()

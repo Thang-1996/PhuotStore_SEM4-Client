@@ -40,16 +40,22 @@
           <a-form-model-item label="Product Price">
             <a-input v-model="product.price" placeholder="Enter Price" />
           </a-form-model-item>
-          <!--          <a-form-model-item label="Product Image">-->
-          <!--            <a-upload-->
-          <!--              name="file"-->
-          <!--              accept="image/*"-->
-          <!--              :multiple="true"-->
-          <!--              @change="handleChange"-->
-          <!--            >-->
-          <!--              <a-button> <a-icon type="upload" /> Select Images </a-button>-->
-          <!--            </a-upload>-->
-          <!--          </a-form-model-item>-->
+          <a-form-model-item label="Product Rental Price">
+            <a-input
+              v-model="product.rental"
+              placeholder="Enter Rental Price"
+            />
+          </a-form-model-item>
+          <a-form-model-item label="Product Image">
+            <a-upload
+              name="file"
+              accept="image/*"
+              :multiple="true"
+              @change="handleChange"
+            >
+              <a-button> <a-icon type="upload" /> Select Images </a-button>
+            </a-upload>
+          </a-form-model-item>
           <a-form-model-item label="Category">
             <a-select
               v-model="product.categoryID"
@@ -110,12 +116,13 @@ export default {
       fileURL: [],
       product: {
         productName: '',
-        // images: [],
+        images: '',
         productCode: '',
         productDesc: '',
         discount: '',
         qty: '',
         price: '',
+        rental: '',
         createAt: new Date(),
         updateAt: new Date(),
         brandID: '',
@@ -124,11 +131,6 @@ export default {
       },
     }
   },
-  // watch: {
-  //   fileList(newValue) {
-  //     console.log(newValue)
-  //   },
-  // },
   async created() {
     await this.getData()
   },
@@ -200,6 +202,8 @@ export default {
       try {
         this.confirmLoading = true
         if (this.productID !== '') {
+          this.uploadImage()
+          this.product.images = JSON.stringify([...this.fileURL])
           await this.$api.updateProduct(this.productID, this.product, {
             headers: {
               Authorization: this.$auth.$storage.getUniversal('token').token,
@@ -207,8 +211,8 @@ export default {
           })
           this.$message.success(`Update Product Successfully!`)
         } else {
-          // this.uploadImage()
-          // this.product.images = [...this.fileURL]
+          this.uploadImage()
+          this.product.images = JSON.stringify([...this.fileURL])
           await this.$api.addProduct(this.product, {
             headers: {
               Authorization: this.$auth.$storage.getUniversal('token').token,
@@ -224,16 +228,15 @@ export default {
         this.confirmLoading = false
         this.visible = false
         this.resetData()
-        // this.fileURL = []
+        this.fileURL = []
         this.$emit('refreshProduct')
       }
     },
     close(e) {
       this.visible = false
       this.resetData()
-      // this.fileURL = []
-      // this.fileList = []
-      // localStorage.removeItem('images')
+      this.fileURL = []
+      this.fileList = []
     },
     resetData() {
       this.product = {
@@ -241,7 +244,7 @@ export default {
         productCode: '',
         productDesc: '',
         discount: '',
-        // images: [],
+        images: '',
         qty: '',
         price: '',
         createAt: new Date(),
@@ -251,33 +254,28 @@ export default {
         status: 'SHOW',
       }
     },
-    // handleChange(info) {
-    //   if (info.file.status !== 'uploading') {
-    //     this.fileList = [...info.fileList]
-    //   }
-    //   if (info.file.status === 'done') {
-    //     this.$message.success(`Add Image Successfully!`)
-    //   }
-    // },
-    // uploadImage() {
-    //   this.fileList.forEach((item) => {
-    //     const fileRef = this.$fire
-    //       .storage()
-    //       .ref()
-    //       .child(`images/${item.originFileObj.name}`)
-    //     fileRef.put(item.originFileObj)
-    //     fileRef.getDownloadURL().then((url) => {
-    //       this.fileURL.push(url)
-    //       console.log(this.fileURL)
-    //       if (process.browser) {
-    //         localStorage.setItem('images', JSON.stringify(this.fileURL))
-    //         this.product.images = localStorage.getItem('images')
-    //           ? localStorage.getItem('images')
-    //           : []
-    //       }
-    //     })
-    //   })
-    // },
+    handleChange(info) {
+      if (info.file.status !== 'uploading') {
+        this.fileList = [...info.fileList]
+      }
+      if (info.file.status === 'done') {
+        this.$message.success(`Add Image Successfully!`)
+      }
+    },
+    uploadImage() {
+      this.fileList.forEach((item) => {
+        const fileRef = this.$fire
+          .storage()
+          .ref()
+          .child(`images/${item.originFileObj.name}`)
+        // Đợi put file lên sau đó lấy url
+        fileRef.put(item.originFileObj)
+        const url = `https://firebasestorage.googleapis.com/v0/b/${
+          fileRef.bucket
+        }/o/${encodeURIComponent(fileRef.fullPath)}?alt=media`
+        this.fileURL.push(url)
+      })
+    },
   },
 }
 </script>

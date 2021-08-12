@@ -42,7 +42,6 @@ export default {
           },
         })
         this.data = [...result.content]
-        console.log(this.data)
         this.transformData(this.data)
       } catch (e) {
         if (e.response.data) {

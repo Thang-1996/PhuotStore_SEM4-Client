@@ -24,7 +24,7 @@
           </td>
           <td data-title="Product">
             <div class="sigma_cart-product-wrapper">
-              <img src="assets/img/products/1.jpg" alt="prod1" />
+              <img :src="JSON.parse(item.product.images)[0]" alt="prod1" />
               <div class="sigma_cart-product-body">
                 <h6>
                   <a href="#">{{ item.product.productName }}</a>
@@ -33,7 +33,12 @@
             </div>
           </td>
           <td data-title="Price">
-            <strong>{{ formatPrice(item.product.price) }}</strong>
+            <strong v-if="selectType === 'buy'">{{
+              formatPrice(item.product.price)
+            }}</strong>
+            <strong v-if="selectType === 'rent'">{{
+              formatPrice(item.product.rental)
+            }}</strong>
           </td>
           <td class="quantity" data-title="Quantity">
             <input
@@ -44,8 +49,11 @@
             />
           </td>
           <td data-title="Total">
-            <strong>{{
+            <strong v-if="selectType === 'buy'">{{
               formatPrice(item.product.price * item.quantity)
+            }}</strong>
+            <strong v-if="selectType === 'rent'">{{
+              formatPrice(item.product.rental * item.quantity)
             }}</strong>
           </td>
         </tr>
@@ -68,19 +76,26 @@
     <!--        <a-range-picker @change="onChange" />-->
     <!--      </div>-->
     <!--    </div>-->
+    <a-radio-group v-model="selectType" @change="onChangeRadio">
+      <a-radio value="rent"> Rent </a-radio>
+      <a-radio value="buy"> Buy </a-radio>
+    </a-radio-group>
     <div class="row">
       <div class="col-lg-6">
         <div class="form-group mb-0">
           <div class="input-group mb-0">
             <div class="input-group-append">
-              <a-range-picker @change="onDateChange" />
-              <button
-                class="sigma_btn-custom shadow-none"
-                type="button"
-                @click="goToCheckOutRent()"
-              >
-                Rent Now
-              </button>
+              <input
+                v-if="selectType === 'buy'"
+                type="text"
+                class="form-control"
+                placeholder="Enter Coupon Code"
+                aria-label="Coupon Code"
+              />
+              <a-range-picker
+                v-if="selectType === 'rent'"
+                @change="onDateChange"
+              />
             </div>
           </div>
         </div>
@@ -88,19 +103,13 @@
       <div class="col-lg-6" style="display: flex; justify-content: flex-end">
         <div class="form-group mb-0">
           <div class="input-group mb-0">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Enter Coupon Code"
-              aria-label="Coupon Code"
-            />
-            <div class="input-group-append">
+            <div>
               <button
-                class="sigma_btn-custom shadow-none"
+                class="d-none d-lg-block sigma_btn-custom"
                 type="button"
                 @click="goToCheckOut()"
               >
-                Pay Now
+                CheckOut
               </button>
             </div>
           </div>
@@ -115,6 +124,7 @@ export default {
     return {
       cart: [],
       rentDate: {},
+      selectType: 'buy',
     }
   },
   async created() {
@@ -130,19 +140,24 @@ export default {
       }
     },
     goToCheckOut() {
-      this.$router.push('/checkout')
+      if (Object.keys(this.rentDate).length) {
+        this.$router.push({
+          name: 'checkout',
+          params: { rentDate: this.rentDate },
+        })
+      } else {
+        this.$router.push('/checkout')
+      }
     },
-    goToCheckOutRent() {
-      this.$router.push({
-        name: 'checkout',
-        params: { rentDate: this.rentDate },
-      })
-    },
+    goToCheckOutRent() {},
     formatPrice(money) {
       return new Intl.NumberFormat('vi-VN', {
         style: 'currency',
         currency: 'VND',
       }).format(money)
+    },
+    onChangeRadio(e) {
+      this.selectType = e.target.value
     },
     onChange(item) {
       ;[...this.cart].map((cart) => {
@@ -170,6 +185,5 @@ export default {
 <style lang="scss">
 .ant-calendar-picker-input {
   height: 59px;
-  border: 1px solid #d48459;
 }
 </style>

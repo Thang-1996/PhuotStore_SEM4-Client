@@ -20,7 +20,10 @@
         <div class="sigma_product">
           <div class="sigma_product-thumb">
             <nuxt-link :to="{ path: `/shop/${product.productID}` }"
-              ><img src="assets/img/products/0.jpg" alt="product"
+              ><img
+                style="width: 200px; height: 200px"
+                :src="JSON.parse(product.images)[0]"
+                alt="product"
             /></nuxt-link>
             <div class="sigma_product-controls">
               <a href="#" data-toggle="tooltip" title="Wishlist">

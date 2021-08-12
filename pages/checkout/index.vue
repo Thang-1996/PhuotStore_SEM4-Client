@@ -97,8 +97,11 @@
                 </td>
                 <td data-title="Quantity">{{ item.quantity }}</td>
                 <td data-title="Total">
-                  <strong>{{
+                  <strong v-if="!rentDate">{{
                     formatPrice(item.product.price * item.quantity)
+                  }}</strong>
+                  <strong v-else>{{
+                    formatPrice(item.product.rental * item.quantity)
                   }}</strong>
                 </td>
               </tr>
@@ -265,7 +268,12 @@ export default {
         const user = this.$auth.$storage.getUniversal('token')
         this.cart = [...cart]
         cart.forEach((item) => {
-          const itemPer = Number(item.product.price * item.quantity)
+          let itemPer = 0
+          if (this.rentDate) {
+            itemPer = Number(item.product.rental * item.quantity)
+          } else {
+            itemPer = Number(item.product.price * item.quantity)
+          }
           this.billingDetails.totalQuantity += Number(item.quantity)
           this.billingDetails.totalPrice += itemPer
           this.billingDetails.product.push(item.product.productID)
@@ -280,7 +288,6 @@ export default {
           }
           this.myItems.push({ ...paypalItem })
         })
-        console.log(this.myItems)
       }
     },
     payment() {
