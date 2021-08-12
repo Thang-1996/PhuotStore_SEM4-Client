@@ -8,7 +8,7 @@
       {{ text === 'SHOW' ? 'SHOW' : 'HIDDEN' }}</a-tag
     >
     <span slot="action" slot-scope="record">
-      <a-button type="primary" @click="editProduct(record.id)"
+      <a-button stype="primary" @click="editProduct(record.id)" style="margin-bottom: 10px"
         ><a-icon type="edit"
       /></a-button>
       <a-button type="danger" @click="deleteProduct(record.id)"

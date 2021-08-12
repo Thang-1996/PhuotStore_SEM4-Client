@@ -40,11 +40,11 @@ const columns = [
     dataIndex: 'phone',
     key: 'phone',
   },
-  {
-    title: 'Email Address',
-    dataIndex: 'email',
-    key: 'email',
-  },
+  // {
+  //   title: 'Email Address',
+  //   dataIndex: 'email',
+  //   key: 'email',
+  // },
   {
     title: 'Shipping Address',
     dataIndex: 'address',
@@ -60,11 +60,11 @@ const columns = [
     dataIndex: 'rentalEnd',
     key: 'rentalEnd',
   },
-  {
-    title: 'Total Rent Days',
-    dataIndex: 'rental',
-    key: 'rental',
-  },
+  // {
+  //   title: 'Total Rent Days',
+  //   dataIndex: 'rental',
+  //   key: 'rental',
+  // },
   {
     title: 'Grand Total',
     dataIndex: 'totalPrice',

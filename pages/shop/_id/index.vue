@@ -67,29 +67,30 @@
                 <div class="sigma_product-variation-wrapper">
                   <div class="qty-outter">
                     <div class="qty-inner">
-                      <label>Qty</label>
-                      <div class="qty">
-                        <span class="qty-subtract"
-                          ><i
-                            class="fa fa-minus"
-                            @click="
-                              quantity === 1 ? (quantity = 1) : (quantity -= 1)
-                            "
-                          ></i
-                        ></span>
-                        <input v-model="quantity" type="text" name="qty" />
-                        <span class="qty-add" @click="quantity += 1"
-                          ><i class="fa fa-plus"></i
-                        ></span>
+                      <label style="margin-right: 5px">QUANTITY</label>
+                      <div class="qty-check">
+                        <div class="qty">
+                          <span class="qty-subtract"
+                            ><i
+                              class="fa fa-minus"
+                              @click="
+                                quantity === 1 ? (quantity = 1) : (quantity -= 1)
+                              "
+                            ></i
+                          ></span>
+                          <input v-model="quantity" type="text" name="qty" />
+                          <span class="qty-add" @click="quantity += 1"
+                            ><i class="fa fa-plus"></i
+                          ></span>
+                        </div>
+                        <div class="sigma_product-buttons" style="margin-right: 5px">
+                          <a class="sigma_btn-custom" @click="addToCard(product)"
+                          >Add To Cart<i class="far fa-shopping-basket"></i>
+                          </a>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-
-                <div class="sigma_product-buttons">
-                  <a class="sigma_btn-custom" @click="addToCard(product)"
-                    >Add To Cart<i class="far fa-shopping-basket"></i>
-                  </a>
                 </div>
               </form>
 
@@ -129,6 +130,15 @@
     </div>
   </a-spin>
 </template>
+<style>
+.qty-check {
+  display: flex;
+
+}
+.qty {
+  margin-right: 20px;
+}
+</style>
 <script>
 export default {
   data() {

@@ -1,7 +1,7 @@
 <template>
   <a-breadcrumb>
     <a-breadcrumb-item href="">
-      <a-icon type="home" />
+      <a-icon style="margin-top: 10px" type="home" />
       <nuxt-link to="/dashboard">Dashboard</nuxt-link>
     </a-breadcrumb-item>
     <a-breadcrumb-item>
