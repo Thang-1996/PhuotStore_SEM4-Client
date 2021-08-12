@@ -133,8 +133,8 @@
 <style>
 .qty-check {
   display: flex;
-
 }
+/*1*/
 .qty {
   margin-right: 20px;
 }
