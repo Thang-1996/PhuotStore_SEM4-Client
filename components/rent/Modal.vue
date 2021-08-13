@@ -34,7 +34,9 @@
               <a-radio
                 :disabled="
                   order &&
-                  (order.status === 'DONE' || order.status === 'CANCEL')
+                  (order.status === 'DONE' ||
+                    order.status === 'CANCEL' ||
+                    order.status === 'WAITING')
                 "
                 value="SHIPPING"
                 style="color: purple"
@@ -45,14 +47,24 @@
               <a-radio
                 :disabled="
                   order &&
-                  (order.status === 'SHIPPING' ||
-                    order.status === 'CONFIRM' ||
-                    order.status === 'DONE')
+                  (order.status === 'SHIPPING' || order.status === 'DONE')
                 "
                 value="CANCEL"
                 style="color: red"
               >
                 CANCEL
+              </a-radio>
+              <a-radio
+                :disabled="
+                  order &&
+                  (order.status === 'WAITING' ||
+                    order.status === 'CONFIRM' ||
+                    order.status === 'CANCEL')
+                "
+                value="DONE"
+                style="color: green"
+              >
+                DONE
               </a-radio>
             </a-radio-group>
           </a-descriptions-item>

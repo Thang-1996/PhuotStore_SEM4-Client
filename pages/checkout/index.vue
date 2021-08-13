@@ -305,9 +305,10 @@ export default {
         if (this.rentDate) {
           delete this.billingDetails.orderName
           this.billingDetails.orderRentName = generateHash()
-          this.billingDetails.rentalStart = this.rentDate.startDate
-          this.billingDetails.rentalEnd = this.rentDate.endDate
-          this.billingDetails.rental = this.calcDayRent
+          this.billingDetails.rentalStart = this.$moment(
+            this.rentDate.startDate
+          )
+          this.billingDetails.rentalEnd = this.$moment(this.rentDate.endDate)
           this.billingDetails.bookingDate = this.rentDate.startDate
           await this.$api.rentPlace(this.billingDetails, {
             headers: {

@@ -88,12 +88,6 @@
               <a-select-option value="HIDDEN"> HIDDEN </a-select-option>
             </a-select>
           </a-form-model-item>
-          <a-form-model-item v-if="action === 'edit'" label="Status">
-            <a-select v-model="product.status" placeholder="Select Status">
-              <a-select-option value="SHOW"> SHOW </a-select-option>
-              <a-select-option value="HIDDEN"> HIDDEN </a-select-option>
-            </a-select>
-          </a-form-model-item>
         </a-form-model>
       </a-spin>
     </a-modal>
@@ -266,7 +260,6 @@ export default {
           .storage()
           .ref()
           .child(`images/${item.originFileObj.name}`)
-        // Đợi put file lên sau đó lấy url
         fileRef.put(item.originFileObj)
         const url = `https://firebasestorage.googleapis.com/v0/b/${
           fileRef.bucket

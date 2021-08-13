@@ -34,7 +34,7 @@
               <hr />
 
               <p class="sigma_product-excerpt">
-                {{ product ? product.productDesc : '' }}
+                Description : {{ product ? product.productDesc : '' }}
               </p>
 
               <p class="fs-14">
@@ -74,7 +74,9 @@
                             ><i
                               class="fa fa-minus"
                               @click="
-                                quantity === 1 ? (quantity = 1) : (quantity -= 1)
+                                quantity === 1
+                                  ? (quantity = 1)
+                                  : (quantity -= 1)
                               "
                             ></i
                           ></span>
@@ -83,9 +85,14 @@
                             ><i class="fa fa-plus"></i
                           ></span>
                         </div>
-                        <div class="sigma_product-buttons" style="margin-right: 5px">
-                          <a class="sigma_btn-custom" @click="addToCard(product)"
-                          >Add To Cart<i class="far fa-shopping-basket"></i>
+                        <div
+                          class="sigma_product-buttons"
+                          style="margin-right: 5px"
+                        >
+                          <a
+                            class="sigma_btn-custom"
+                            @click="addToCard(product)"
+                            >Add To Cart<i class="far fa-shopping-basket"></i>
                           </a>
                         </div>
                       </div>

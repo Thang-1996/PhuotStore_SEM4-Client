@@ -245,30 +245,249 @@
           </a-table>
         </div>
       </a-tab-pane>
+      <a-tab-pane key="rent" tab="Rent Info" force-render>
+        <h6 v-if="orderRentID !== ''" style="color: #d48459">
+          ORDER CODE : PS - {{ orderRentID.orderRentName }}
+        </h6>
+        <a-tabs
+          v-if="orderRentID !== ''"
+          default-active-key="WAITING"
+          @change="changeTab"
+        >
+          <a-tab-pane key="WAITING" tab="WAITING">
+            <a-list
+              v-if="orderRent.status === 'WAITING'"
+              item-layout="horizontal"
+              :data-source="dataRent"
+            >
+              <a-list-item slot="renderItem" slot-scope="item">
+                <a-list-item-meta :description="item.productDesc">
+                  <a slot="title">{{ item.productName }}</a>
+                  <a-avatar slot="avatar" src="assets/img/products/0.jpg" />
+                </a-list-item-meta>
+                <div style="margin-right: 20px; color: #d48459">
+                  Brand : {{ item.brand }}
+                </div>
+                <div style="margin-right: 20px; color: #d48459">
+                  Category : {{ item.category }}
+                </div>
+                <div style="color: #d48459">
+                  {{ formatPrice(item.rental) }}
+                </div>
+              </a-list-item>
+              <div style="display: flex; justify-content: space-between">
+                <p style="color: #d48459">{{ dataRent.length }} product</p>
+                <p style="color: #d48459">
+                  Total Price : {{ formatPrice(orderRent.totalPrice) }}
+                </p>
+              </div>
+              <div style="display: flex; justify-content: space-between">
+                <p style="color: #d48459">
+                  Have you want change the billing infomation please click Edit,
+                  or click the cancel to cancel the order
+                </p>
+                <a-button type="primary" @click="visible = true">
+                  Edit Rent</a-button
+                >
+                <a-button type="danger" @click="updateOrderRent('CANCEL')">
+                  CANCEL Rent</a-button
+                >
+              </div>
+            </a-list>
+            <p v-else style="color: #d48459; text-align: center">
+              This Status Have No Order
+            </p>
+          </a-tab-pane>
+          <a-tab-pane key="CONFIRM" tab="CONFIRM">
+            <a-list
+              v-if="orderRent.status === 'CONFIRM'"
+              item-layout="horizontal"
+              :data-source="dataRent"
+            >
+              <a-list-item slot="renderItem" slot-scope="item">
+                <a-list-item-meta :description="item.productDesc">
+                  <a slot="title">{{ item.productName }}</a>
+                  <a-avatar slot="avatar" src="assets/img/products/0.jpg" />
+                </a-list-item-meta>
+                <div style="margin-right: 20px; color: #d48459">
+                  Brand : {{ item.brand }}
+                </div>
+                <div style="margin-right: 20px; color: #d48459">
+                  Category : {{ item.category }}
+                </div>
+                <div style="color: #d48459">
+                  {{ formatPrice(item.rental) }}
+                </div>
+              </a-list-item>
+              <div style="display: flex; justify-content: space-between">
+                <p style="color: #d48459">{{ dataRent.length }} product</p>
+                <p style="color: #d48459">
+                  Total Price : {{ formatPrice(orderRent.totalPrice) }}
+                </p>
+              </div>
+              <div style="display: flex; justify-content: space-between">
+                <p style="color: #d48459">
+                  Your order is being prepared. Please check your shipping
+                  address before we ship it. Orders during delivery cannot be
+                  edited or canceled
+                </p>
+                <a-button type="primary" @click="visible = true">
+                  Edit Rent</a-button
+                >
+              </div>
+            </a-list>
+            <p v-else style="color: #d48459; text-align: center">
+              This Status Have No Order
+            </p>
+          </a-tab-pane>
+          <a-tab-pane key="SHIPPING" tab="SHIPPING">
+            <a-list
+              v-if="orderRent.status === 'SHIPPING'"
+              item-layout="horizontal"
+              :data-source="dataRent"
+            >
+              <a-list-item slot="renderItem" slot-scope="item">
+                <a-list-item-meta :description="item.productDesc">
+                  <a slot="title">{{ item.productName }}</a>
+                  <a-avatar slot="avatar" src="assets/img/products/0.jpg" />
+                </a-list-item-meta>
+                <div style="margin-right: 20px; color: #d48459">
+                  Brand : {{ item.brand }}
+                </div>
+                <div style="margin-right: 20px; color: #d48459">
+                  Category : {{ item.category }}
+                </div>
+                <div style="color: #d48459">
+                  {{ formatPrice(item.rental) }}
+                </div>
+              </a-list-item>
+              <div style="display: flex; justify-content: space-between">
+                <p style="color: #d48459">{{ dataRent.length }} product</p>
+                <p style="color: #d48459">
+                  Total Price : {{ formatPrice(orderRent.totalPrice) }}
+                </p>
+              </div>
+              <div style="display: flex; justify-content: space-between">
+                <p style="color: #d48459">
+                  Have you received your order, Click the order received order
+                  button to confirm the order
+                </p>
+                <a-button type="primary" @click="updateOrderRent('DONE')">
+                  Rent received
+                </a-button>
+              </div>
+            </a-list>
+            <p v-else style="color: #d48459; text-align: center">
+              This Status Have No Order
+            </p>
+          </a-tab-pane>
+          <a-tab-pane key="CANCEL" tab="CANCEL">
+            <a-list
+              v-if="orderRent.status === 'CANCEL'"
+              item-layout="horizontal"
+              :data-source="dataRent"
+            >
+              <a-list-item slot="renderItem" slot-scope="item">
+                <a-list-item-meta :description="item.productDesc">
+                  <a slot="title">{{ item.productName }}</a>
+                  <a-avatar slot="avatar" src="assets/img/products/0.jpg" />
+                </a-list-item-meta>
+                <div style="margin-right: 20px; color: #d48459">
+                  Brand : {{ item.brand }}
+                </div>
+                <div style="margin-right: 20px; color: #d48459">
+                  Category : {{ item.category }}
+                </div>
+                <div style="color: #d48459">
+                  {{ formatPrice(item.rental) }}
+                </div>
+              </a-list-item>
+              <div style="display: flex; justify-content: space-between">
+                <p style="color: #d48459">{{ dataRent.length }} product</p>
+                <p style="color: #d48459">
+                  Total Price : {{ formatPrice(orderRent.totalPrice) }}
+                </p>
+              </div>
+              <div style="display: flex; justify-content: space-between">
+                <p style="color: #d48459">
+                  Have you received your order, if you have received it, please
+                  click the confirm button
+                </p>
+              </div>
+            </a-list>
+            <p v-else style="color: #d48459; text-align: center">
+              This Status Have No Order
+            </p>
+          </a-tab-pane>
+          <a-tab-pane key="DONE" tab="DONE">
+            <a-list
+              v-if="orderRent.status === 'DONE'"
+              item-layout="horizontal"
+              :data-source="dataRent"
+            >
+              <a-list-item slot="renderItem" slot-scope="item">
+                <a-list-item-meta :description="item.productDesc">
+                  <a slot="title">{{ item.productName }}</a>
+                  <a-avatar slot="avatar" src="assets/img/products/0.jpg" />
+                </a-list-item-meta>
+                <div style="margin-right: 20px; color: #d48459">
+                  Brand : {{ item.brand }}
+                </div>
+                <div style="margin-right: 20px; color: #d48459">
+                  Category : {{ item.category }}
+                </div>
+                <div style="color: #d48459">
+                  {{ formatPrice(item.rental) }}
+                </div>
+              </a-list-item>
+              <div style="display: flex; justify-content: space-between">
+                <p style="color: #d48459">{{ dataRent.length }} product</p>
+                <p style="color: #d48459">
+                  Total Price : {{ formatPrice(orderRent.totalPrice) }}
+                </p>
+              </div>
+              <div style="display: flex; justify-content: space-between">
+                <p style="color: #d48459">
+                  Order has been delivered successfully
+                </p>
+              </div>
+            </a-list>
+            <p v-else style="color: #d48459; text-align: center">
+              This Status Have No Order Rent
+            </p>
+          </a-tab-pane>
+          <a-button slot="tabBarExtraContent" @click="backToListRent">
+            <a-icon type="arrow-left" /> Back To List
+          </a-button>
+        </a-tabs>
+        <div v-else>
+          <h6 style="color: #d48459; text-align: center">ORDER LIST</h6>
+          <a-table :columns="columnsRent" :data-source="orderRentList">
+            <span slot="action" slot-scope="record">
+              <a-button
+                type="primary"
+                @click="editOrderRent(record.orderRentID)"
+                ><a-icon type="edit"
+              /></a-button>
+            </span>
+            <span slot="payDate" slot-scope="record">
+              {{ $moment(record.rentalStart).format('YYYY-MM-DD') }}
+            </span>
+            <span slot="payEnd" slot-scope="record">
+              {{ $moment(record.rentalEnd).format('YYYY-MM-DD') }}
+            </span>
+          </a-table>
+        </div>
+      </a-tab-pane>
     </a-tabs>
-    <a-modal v-model="visible" title="Edit Shipping Address" @ok="handleOk">
+    <a-modal v-model="visible" title="Edit Rent Time" @ok="handleRentOk">
       <a-form-model
-        :model="orderUpdate"
+        :model="orderRentUpdate"
         :label-col="{ span: 7 }"
         :wrapper-col="{ span: 17 }"
       >
-        <a-form-model-item label="Shipping Address">
-          <a-input
-            v-model="orderUpdate.shippingAddress"
-            placeholder="Enter Shipping Address"
-          />
-        </a-form-model-item>
-        <a-form-model-item label="Phone Number">
-          <a-input
-            v-model="orderUpdate.phone"
-            placeholder="Enter Phone Number"
-          />
-        </a-form-model-item>
-        <a-form-model-item label="Email Address">
-          <a-input
-            v-model="orderUpdate.email"
-            placeholder="Enter Email Address"
-          />
+        <a-form-model-item label="Rent Date End">
+          <a-date-picker v-model="orderRentUpdate.rentalEnd" />
         </a-form-model-item>
       </a-form-model>
     </a-modal>
@@ -319,12 +538,68 @@ const columns = [
     scopedSlots: { customRender: 'action' },
   },
 ]
+const columnsRent = [
+  {
+    title: 'ID',
+    dataIndex: 'orderRentID',
+    key: 'orderRentID',
+  },
+  {
+    title: 'Order Code',
+    dataIndex: 'orderRentName',
+    key: 'orderRentName',
+  },
+  {
+    title: 'Grand Total',
+    dataIndex: 'totalPrice',
+    key: 'totalPrice',
+  },
+  {
+    title: 'Total Quantity',
+    dataIndex: 'totalQuantity',
+    key: 'totalQuantity',
+  },
+  {
+    title: 'Rent Start',
+    dataIndex: 'rentalStart',
+    key: 'rentalStart',
+    scopedSlots: { customRender: 'payDate' },
+  },
+  {
+    title: 'Rent End',
+    dataIndex: 'rentalEnd',
+    key: 'rentalEnd',
+    scopedSlots: { customRender: 'payEnd' },
+  },
+  {
+    title: 'Deposits',
+    dataIndex: 'deposits',
+    key: 'deposits',
+  },
+  {
+    title: 'Status',
+    dataIndex: 'status',
+    key: 'status',
+  },
+  {
+    title: 'Order Note',
+    dataIndex: 'note',
+    key: 'note',
+  },
+  {
+    title: 'Action',
+    key: 'action',
+    scopedSlots: { customRender: 'action' },
+  },
+]
 export default {
   name: 'index.vue',
   data() {
     return {
       data: [],
+      dataRent: [],
       columns,
+      columnsRent,
       labelCol: { span: 3 },
       wrapperCol: { span: 21 },
       user: {},
@@ -332,8 +607,12 @@ export default {
       orderID: '',
       order: {},
       orderList: [],
+      orderRentID: '',
+      orderRent: {},
+      orderRentList: [],
       products: [],
       orderUpdate: {},
+      orderRentUpdate: {},
       visible: false,
     }
   },
@@ -383,6 +662,8 @@ export default {
     tabChange(key) {
       if (key === 'order' && this.userID !== '') {
         this.getOrderList()
+      } else if (key === 'rent' && this.userID !== '') {
+        this.getRentList()
       } else {
         this.loadPage()
       }
@@ -390,6 +671,11 @@ export default {
     async backToList() {
       await this.getOrderList()
       this.orderID = ''
+      this.products = []
+    },
+    async backToListRent() {
+      await this.getRentList()
+      this.orderRentID = ''
       this.products = []
     },
     formatPrice(money) {
@@ -408,6 +694,23 @@ export default {
         })
         this.orderList = [...result.content]
         console.log(result.content)
+      } catch (e) {
+        if (e.response.data) {
+          this.$message.warning(e.response.data.details)
+        }
+      } finally {
+        this.loading = false
+      }
+    },
+    async getRentList() {
+      try {
+        this.loading = true
+        const result = await this.$api.getRentByUser(this.userID, {
+          headers: {
+            Authorization: this.$auth.$storage.getUniversal('token').token,
+          },
+        })
+        this.orderRentList = [...result.content]
       } catch (e) {
         if (e.response.data) {
           this.$message.warning(e.response.data.details)
@@ -478,6 +781,73 @@ export default {
         this.loading = false
       }
     },
+    async editOrderRent(id) {
+      this.orderRentID = id
+      try {
+        this.loading = true
+        const result = await this.$api.getRent(id, {
+          headers: {
+            Authorization: this.$auth.$storage.getUniversal('token').token,
+          },
+        })
+        this.orderRent = { ...result }
+        this.dataRent = [...result.products].reduce((acc, item) => {
+          console.log(acc)
+          const product = {
+            productDesc: item.productDesc,
+            productName: item.productName,
+            price: item.price,
+            rental: item.rental,
+            brand: item.brand.brandName,
+            category: item.category.categoryName,
+          }
+          acc.push(product)
+          return acc
+        }, [])
+        const productEdit = []
+        // eslint-disable-next-line no-unused-expressions
+        result.products.length
+          ? result.products.forEach((item) => {
+              productEdit.push(item.productID)
+            })
+          : []
+        const comboEdit = []
+        // eslint-disable-next-line no-unused-expressions
+        result.combos.length
+          ? result.combos.forEach((item) => {
+              comboEdit.push(item.comboID)
+            })
+          : []
+        this.orderRentUpdate = {
+          orderRentID: result.orderRentID,
+          orderRentName: result.orderRentName,
+          phone: result.phone,
+          shippingAddress: result.shippingAddress,
+          deposits: result.deposits,
+          rentalStart: result.rentalStart,
+          rentalEnd: result.rentalEnd,
+          lastName: result.lastName,
+          firstName: result.firstName,
+          totalQuantity: result.totalQuantity,
+          combo: comboEdit,
+          product: productEdit,
+          userID: result.user.userID,
+          email: result.email,
+          note: result.note,
+          paymentType: result.paymentType,
+          totalPrice: result.totalPrice,
+          status: result.status,
+          createAt: result.createAt,
+          updateAt: new Date(),
+        }
+      } catch (e) {
+        if (e.response.data) {
+          this.$message.warning(e.response.data.details)
+        }
+      } finally {
+        this.loading = false
+      }
+    },
     changeTab(key) {
       console.log(key)
     },
@@ -502,6 +872,24 @@ export default {
         this.visible = false
       }
     },
+    async handleRentOk(e) {
+      try {
+        this.loading = true
+        await this.$api.updateRent(this.orderRentID, this.orderRentUpdate, {
+          headers: {
+            Authorization: this.$auth.$storage.getUniversal('token').token,
+          },
+        })
+      } catch (e) {
+        if (e.response.data) {
+          this.$message.warning(e.response.data.details)
+        }
+      } finally {
+        this.loading = false
+        await this.editOrderRent(this.orderRentID)
+        this.visible = false
+      }
+    },
     async updateOrder(status) {
       try {
         this.orderUpdate.status = status
@@ -518,6 +906,24 @@ export default {
       } finally {
         this.loading = false
         await this.editOrder(this.orderID)
+      }
+    },
+    async updateOrderRent(status) {
+      try {
+        this.orderRentUpdate.status = status
+        this.loading = true
+        await this.$api.updateRent(this.orderRentID, this.orderRentUpdate, {
+          headers: {
+            Authorization: this.$auth.$storage.getUniversal('token').token,
+          },
+        })
+      } catch (e) {
+        if (e.response.data) {
+          this.$message.warning(e.response.data.details)
+        }
+      } finally {
+        this.loading = false
+        await this.editOrderRent(this.orderRentID)
       }
     },
   },

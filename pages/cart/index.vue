@@ -168,6 +168,7 @@ export default {
       }
     },
     onDateChange(date, dateString) {
+      console.log(dateString)
       this.rentDate.startDate = dateString[0]
       this.rentDate.endDate = dateString[1]
     },

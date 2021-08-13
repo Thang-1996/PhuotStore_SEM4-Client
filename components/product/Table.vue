@@ -8,7 +8,10 @@
       {{ text === 'SHOW' ? 'SHOW' : 'HIDDEN' }}</a-tag
     >
     <span slot="action" slot-scope="record">
-      <a-button stype="primary" @click="editProduct(record.id)" style="margin-bottom: 10px"
+      <a-button
+        type="primary"
+        style="margin-bottom: 10px"
+        @click="editProduct(record.id)"
         ><a-icon type="edit"
       /></a-button>
       <a-button type="danger" @click="deleteProduct(record.id)"
@@ -49,6 +52,11 @@ const columns = [
     title: 'Price',
     dataIndex: 'price',
     key: 'price',
+  },
+  {
+    title: 'Rental',
+    dataIndex: 'rental',
+    key: 'rental',
   },
   {
     title: 'Category',

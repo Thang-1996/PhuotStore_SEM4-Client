@@ -67,6 +67,7 @@ export default {
           status: item.status,
           create_at: item.createAt,
           discount: item.discount,
+          rental: item.rental,
           price: item.price,
           brandID: item.brand.brandID,
           category: item.category.categoryID,
