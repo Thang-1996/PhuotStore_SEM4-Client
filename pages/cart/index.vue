@@ -84,13 +84,10 @@
       <div class="col-lg-6">
         <div class="form-group mb-0">
           <div class="input-group mb-0">
-            <div class="input-group-append">
-              <input
+            <div>
+              <a-input
                 v-if="selectType === 'buy'"
-                type="text"
-                class="form-control"
                 placeholder="Enter Coupon Code"
-                aria-label="Coupon Code"
               />
               <a-range-picker
                 v-if="selectType === 'rent'"

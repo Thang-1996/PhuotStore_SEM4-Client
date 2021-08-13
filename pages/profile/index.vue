@@ -470,12 +470,6 @@
                 ><a-icon type="edit"
               /></a-button>
             </span>
-            <span slot="payDate" slot-scope="record">
-              {{ $moment(record.rentalStart).format('YYYY-MM-DD') }}
-            </span>
-            <span slot="payEnd" slot-scope="record">
-              {{ $moment(record.rentalEnd).format('YYYY-MM-DD') }}
-            </span>
           </a-table>
         </div>
       </a-tab-pane>
@@ -487,7 +481,10 @@
         :wrapper-col="{ span: 17 }"
       >
         <a-form-model-item label="Rent Date End">
-          <a-date-picker v-model="orderRentUpdate.rentalEnd" />
+          <a-date-picker
+            v-model="orderRentUpdate.rentalEnd"
+            :disabled-date="disabledEndDate"
+          />
         </a-form-model-item>
       </a-form-model>
     </a-modal>
@@ -563,13 +560,6 @@ const columnsRent = [
     title: 'Rent Start',
     dataIndex: 'rentalStart',
     key: 'rentalStart',
-    scopedSlots: { customRender: 'payDate' },
-  },
-  {
-    title: 'Rent End',
-    dataIndex: 'rentalEnd',
-    key: 'rentalEnd',
-    scopedSlots: { customRender: 'payEnd' },
   },
   {
     title: 'Deposits',
@@ -889,6 +879,13 @@ export default {
         await this.editOrderRent(this.orderRentID)
         this.visible = false
       }
+    },
+    disabledEndDate(endValue) {
+      const startValue = this.$moment(this.orderRentUpdate.rentalEnd)
+      if (!endValue || !startValue) {
+        return false
+      }
+      return startValue.valueOf() >= endValue.valueOf()
     },
     async updateOrder(status) {
       try {
