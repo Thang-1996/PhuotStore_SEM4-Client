@@ -47,7 +47,7 @@
         <nav class="navbar">
           <div class="sigma_logo-wrapper">
             <a class="navbar-brand" href="index.html">
-              <img src="assets/img/logo-2.png" alt="logo" />
+              <img src="/logonew.png" alt="logo" />
             </a>
           </div>
           <ul class="navbar-nav">
