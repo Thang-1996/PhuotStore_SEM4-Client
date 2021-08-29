@@ -91,7 +91,6 @@
               />
               <a-range-picker
                 v-if="selectType === 'rent'"
-                :disabled-date="disabledDate"
                 @change="onDateChange"
               />
             </div>

@@ -59,6 +59,9 @@
               <a-radio value="EXPIRED" :disabled="true" style="color: orange">
                 EXPIRED
               </a-radio>
+              <a-radio value="RENTING" :disabled="true" style="color: #ab4f71">
+                RENTING
+              </a-radio>
               <a-radio
                 :disabled="
                   order &&
@@ -290,7 +293,7 @@ export default {
           'days'
         )
         if (this.$moment(this.orderUpdate.rentalEnd).isAfter(this.$moment())) {
-          this.orderUpdate.status = 'SHIPPING'
+          this.orderUpdate.status = 'RENTING'
         }
         this.orderUpdate.bookingDate = this.order.bookingDate
       }

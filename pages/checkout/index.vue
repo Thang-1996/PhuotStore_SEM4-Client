@@ -119,7 +119,7 @@
             </tbody>
             <tr class="total">
               <td>
-                <h6 class="mb-0">Grand Total {{ calcUSD }}</h6>
+                <h6 class="mb-0">Grand Total</h6>
               </td>
               <td>{{ billingDetails.totalQuantity }}</td>
               <td>
@@ -288,10 +288,16 @@ export default {
           }
           this.billingDetails.totalQuantity += Number(item.quantity)
           this.billingDetails.totalPrice += itemPer
+          this.billingDetails.totalPrice =
+            this.billingDetails.totalPrice *
+            this.$moment(this.rentDate.endDate).diff(
+              this.$moment(this.rentDate.startDate),
+              'days'
+            )
           this.billingDetails.product.push(item.product.productID)
           this.billingDetails.userID = user.userID
           this.billingDetails.orderName = generateHash()
-          this.deposist = this.billingDetails.totalPrice / 10
+          this.deposist = this.billingDetails.totalPrice * 10
           const paypalItem = {
             name: item.product.productName,
             description: item.product.productDesc,
@@ -326,7 +332,7 @@ export default {
             this.rentDate.endDate
           ).diff(this.$moment(this.rentDate.startDate), 'days')
           this.billingDetails.totalPrice =
-            this.billingDetails.totalPrice + this.deposist
+            Number(this.billingDetails.totalPrice) + Number(this.deposist)
           await this.$api.rentPlace(this.billingDetails, {
             headers: {
               Authorization: this.$auth.$storage.getUniversal('token').token,
