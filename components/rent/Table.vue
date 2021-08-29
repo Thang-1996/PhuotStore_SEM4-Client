@@ -40,11 +40,6 @@ const columns = [
     dataIndex: 'phone',
     key: 'phone',
   },
-  // {
-  //   title: 'Email Address',
-  //   dataIndex: 'email',
-  //   key: 'email',
-  // },
   {
     title: 'Shipping Address',
     dataIndex: 'address',
@@ -60,11 +55,11 @@ const columns = [
     dataIndex: 'rentalEnd',
     key: 'rentalEnd',
   },
-  // {
-  //   title: 'Total Rent Days',
-  //   dataIndex: 'rental',
-  //   key: 'rental',
-  // },
+  {
+    title: 'Total Rent Days',
+    dataIndex: 'bookingDate',
+    key: 'bookingDate',
+  },
   {
     title: 'Grand Total',
     dataIndex: 'totalPrice',
@@ -123,6 +118,8 @@ export default {
         color = 'blue'
       } else if (text === 'DONE') {
         color = 'green'
+      } else if (text === 'EXPIRED') {
+        color = 'purple'
       } else {
         color = 'red'
       }

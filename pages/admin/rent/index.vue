@@ -36,6 +36,7 @@ export default {
         })
         this.data = [...result.content]
         this.transformData(this.data)
+        this.checkExpired()
       } catch (e) {
         if (e.response.data) {
           this.$message.warning(e.response.data.details)
@@ -43,6 +44,18 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    checkExpired() {
+      this.orders = [...this.orders].reduce((acc, item) => {
+        const newItem = {
+          ...item,
+          status: this.$moment(item.rentalEnd).isBefore(this.$moment())
+            ? 'EXPIRED'
+            : item.status,
+        }
+        acc.push(newItem)
+        return acc
+      }, [])
     },
     async search(obj) {
       if (obj.typeSearch === 'search') {
@@ -90,7 +103,6 @@ export default {
     },
     transformData(data) {
       this.orders = [...data].reduce((acc, item, index) => {
-        console.log(item)
         const obj = {
           key: index + 1,
           id: item.orderRentID,
@@ -103,9 +115,9 @@ export default {
           lastName: item.lastName,
           email: item.email,
           address: item.shippingAddress,
+          bookingDate: item.bookingDate,
           phone: item.phone,
           paymentType: item.paymentType,
-          rental: item.rental,
           rentalStart: this.$moment(item.rentalStart).format('YYYY-MM-DD'),
           rentalEnd: this.$moment(item.rentalEnd).format('YYYY-MM-DD'),
           user: item.user,

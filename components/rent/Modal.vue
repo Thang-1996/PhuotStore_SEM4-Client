@@ -24,7 +24,8 @@
                   order &&
                   (order.status === 'SHIPPING' ||
                     order.status === 'CANCEL' ||
-                    order.status === 'DONE')
+                    order.status === 'DONE' ||
+                    order.status === 'EXPIRED')
                 "
                 value="CONFIRM"
                 style="color: #5d91ff"
@@ -36,7 +37,8 @@
                   order &&
                   (order.status === 'DONE' ||
                     order.status === 'CANCEL' ||
-                    order.status === 'WAITING')
+                    order.status === 'WAITING' ||
+                    order.status === 'EXPIRED')
                 "
                 value="SHIPPING"
                 style="color: purple"
@@ -54,12 +56,16 @@
               >
                 CANCEL
               </a-radio>
+              <a-radio value="EXPIRED" :disabled="true" style="color: orange">
+                EXPIRED
+              </a-radio>
               <a-radio
                 :disabled="
                   order &&
                   (order.status === 'WAITING' ||
                     order.status === 'CONFIRM' ||
-                    order.status === 'CANCEL')
+                    order.status === 'CANCEL' ||
+                    order.status === 'EXPIRED')
                 "
                 value="DONE"
                 style="color: green"
@@ -77,13 +83,45 @@
             {{ order ? order.user.username : '' }}
           </a-descriptions-item>
           <a-descriptions-item label="Rent StartDate" :span="2">
-            {{ order ? $moment(order.rentalStart).format('YYYY-MM-DD') : '' }}
+            <span
+              v-if="
+                (order && order.status === 'DONE') ||
+                (order && order.status === 'SHIPPING')
+              "
+            >
+              {{
+                order ? $moment(order.rentalStart).format('YYYY-MM-DD') : ''
+              }}</span
+            >
+            <div v-else>
+              <a-date-picker
+                v-if="order"
+                v-model="order.rentalStart"
+                @change="handleChangeRentalStart"
+              />
+            </div>
           </a-descriptions-item>
           <a-descriptions-item label="Total Rent Days" :span="2">
-            {{ order ? order.rental : '' }}
+            {{ order ? order.bookingDate : '' }}
           </a-descriptions-item>
           <a-descriptions-item label="Rent EndDate" :span="2">
-            {{ order ? $moment(order.rentalEnd).format('YYYY-MM-DD') : '' }}
+            <span
+              v-if="
+                (order && order.status === 'DONE') ||
+                (order && order.status === 'SHIPPING')
+              "
+            >
+              {{
+                order ? $moment(order.rentalEnd).format('YYYY-MM-DD') : ''
+              }}</span
+            >
+            <div v-else>
+              <a-date-picker
+                v-if="order"
+                v-model="order.rentalEnd"
+                @change="handleChangeRentalEnd"
+              />
+            </div>
           </a-descriptions-item>
           <a-descriptions-item label="Email Address" :span="2">
             {{ order ? order.email : '' }}
@@ -138,7 +176,9 @@ export default {
       isCanChange: false,
     }
   },
-  computed: {},
+  mounted() {
+    console.log('abc')
+  },
   methods: {
     async showEdit(id) {
       try {
@@ -171,13 +211,15 @@ export default {
           phone: result.phone,
           rentalStart: result.rentalStart,
           rentalEnd: result.rentalEnd,
-          rental: result.rental,
+          bookingDate: result.bookingDate,
           shippingAddress: result.shippingAddress,
           email: result.email,
           note: result.note,
           paymentType: result.paymentType,
           totalPrice: result.totalPrice,
-          status: result.status,
+          status: this.$moment(result.rentalEnd).isBefore(this.$moment())
+            ? 'EXPIRED'
+            : result.status,
           user: result.user,
           products: result.products,
           combos: result.combos,
@@ -190,7 +232,7 @@ export default {
           phone: result.phone,
           rentalStart: result.rentalStart,
           rentalEnd: result.rentalEnd,
-          rental: result.rental,
+          bookingDate: result.bookingDate,
           shippingAddress: result.shippingAddress,
           lastName: result.lastName,
           firstName: result.firstName,
@@ -202,11 +244,15 @@ export default {
           note: result.note,
           paymentType: result.paymentType,
           totalPrice: result.totalPrice,
-          status: result.status,
+          status: this.$moment(result.rentalEnd).isBefore(this.$moment())
+            ? 'EXPIRED'
+            : result.status,
           createAt: result.createAt,
           updateAt: new Date(),
         }
-        this.status = result.status
+        this.status = this.$moment(result.rentalEnd).isBefore(this.$moment())
+          ? 'EXPIRED'
+          : result.status
       } catch (e) {
         if (e.response.data) {
           this.$message.warning(e.response.data.details)
@@ -221,6 +267,33 @@ export default {
         content: 'Do you sure want to update order ? ',
         onOk: () => this.updateOrder(),
       })
+    },
+    handleChangeRentalStart(date) {
+      if (this.order && date !== null) {
+        this.order.rentalStart = date
+        this.orderUpdate.rentalStart = date
+
+        this.order.bookingDate = this.$moment(this.order.rentalEnd).diff(
+          date,
+          'days'
+        )
+        this.orderUpdate.bookingDate = this.order.bookingDate
+      }
+    },
+
+    handleChangeRentalEnd(date) {
+      if (this.order && date !== null) {
+        this.order.rentalEnd = date
+        this.orderUpdate.rentalEnd = date
+        this.order.bookingDate = date.diff(
+          this.$moment(this.order.rentalStart),
+          'days'
+        )
+        if (this.$moment(this.orderUpdate.rentalEnd).isAfter(this.$moment())) {
+          this.orderUpdate.status = 'SHIPPING'
+        }
+        this.orderUpdate.bookingDate = this.order.bookingDate
+      }
     },
     async updateOrder() {
       try {

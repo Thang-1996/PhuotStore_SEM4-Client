@@ -91,6 +91,7 @@
               />
               <a-range-picker
                 v-if="selectType === 'rent'"
+                :disabled-date="disabledDate"
                 @change="onDateChange"
               />
             </div>
@@ -146,7 +147,10 @@ export default {
         this.$router.push('/checkout')
       }
     },
-    goToCheckOutRent() {},
+    disabledDate(current) {
+      // Can not select days before today and today
+      return current && current < this.$moment().endOf('day')
+    },
     formatPrice(money) {
       return new Intl.NumberFormat('vi-VN', {
         style: 'currency',
@@ -165,7 +169,6 @@ export default {
       }
     },
     onDateChange(date, dateString) {
-      console.log(dateString)
       this.rentDate.startDate = dateString[0]
       this.rentDate.endDate = dateString[1]
     },

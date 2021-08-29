@@ -17,6 +17,17 @@
                 readonly
               />
             </div>
+            <div v-if="rentDate" class="form-group col-xl-12">
+              <label>Deposits <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                :placeholder="`${formatPrice(deposist)}`"
+                name="fname"
+                class="form-control"
+                required=""
+                readonly
+              />
+            </div>
             <div class="form-group col-xl-6">
               <label>Name <span class="text-danger">*</span></label>
               <input
@@ -182,6 +193,7 @@ export default {
       cart: [],
       grandTotal: 0,
       user: {},
+      deposist: 0,
       billingDetails: {
         orderName: '',
         note: '',
@@ -279,6 +291,7 @@ export default {
           this.billingDetails.product.push(item.product.productID)
           this.billingDetails.userID = user.userID
           this.billingDetails.orderName = generateHash()
+          this.deposist = this.billingDetails.totalPrice / 10
           const paypalItem = {
             name: item.product.productName,
             description: item.product.productDesc,
@@ -309,7 +322,11 @@ export default {
             this.rentDate.startDate
           )
           this.billingDetails.rentalEnd = this.$moment(this.rentDate.endDate)
-          this.billingDetails.bookingDate = this.rentDate.startDate
+          this.billingDetails.bookingDate = this.$moment(
+            this.rentDate.endDate
+          ).diff(this.$moment(this.rentDate.startDate), 'days')
+          this.billingDetails.totalPrice =
+            this.billingDetails.totalPrice + this.deposist
           await this.$api.rentPlace(this.billingDetails, {
             headers: {
               Authorization: this.$auth.$storage.getUniversal('token').token,
