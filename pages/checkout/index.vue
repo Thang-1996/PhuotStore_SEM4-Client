@@ -354,7 +354,19 @@ export default {
         this.loading = false
         this.$message.success(`Payment Successfully!`)
         this.resetBilling()
-        this.$router.push('/')
+        if (this.rentDate) {
+          await this.$router.push({
+            name: 'profile',
+            params: { id: this.user.userID },
+            query: { type: 'rent' },
+          })
+        } else {
+          await this.$router.push({
+            name: 'profile',
+            params: { id: this.user.userID },
+            query: { type: 'order' },
+          })
+        }
       }
     },
     formatPrice(money) {

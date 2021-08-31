@@ -1,6 +1,10 @@
 <template>
   <a-spin :spinning="loading">
-    <a-tabs default-active-key="user" tab-position="left" @change="tabChange">
+    <a-tabs
+      :default-active-key="defaultActiveTabs"
+      tab-position="left"
+      @change="tabChange"
+    >
       <a-tab-pane key="user" tab="User Info">
         <a-form-model
           :model="user"
@@ -245,7 +249,7 @@
           </a-table>
         </div>
       </a-tab-pane>
-      <a-tab-pane key="rent" tab="Rent Info" force-render>
+      <a-tab-pane key="rent" tab="Rent Info">
         <h6 v-if="orderRentID !== ''" style="color: #d48459">
           ORDER CODE : PS - {{ orderRentID.orderRentName }}
         </h6>
@@ -586,6 +590,7 @@ export default {
   name: 'index.vue',
   data() {
     return {
+      defaultActiveTabs: '',
       data: [],
       dataRent: [],
       columns,
@@ -611,8 +616,21 @@ export default {
       return this.$route.params.id ? this.$route.params.id : ''
     },
   },
+  beforeMount() {
+    const prevPath = this.$route.name
+    const typeOrder = this.$route.query
+    if (prevPath === 'profile' && typeOrder.type === 'order') {
+      this.defaultActiveTabs = 'order'
+    } else if (prevPath === 'profile' && typeOrder.type === 'rent') {
+      this.defaultActiveTabs = 'rent'
+    } else {
+      this.defaultActiveTabs = 'user'
+    }
+  },
   async created() {
     await this.loadPage()
+    await this.getOrderList()
+    await this.getRentList()
   },
   methods: {
     async loadPage() {

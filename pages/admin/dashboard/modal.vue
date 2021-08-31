@@ -3,9 +3,40 @@
     v-model="visible"
     :width="1400"
     title="Order List"
-    @ok="handleOk"
-    @cancel="close"
+    :ok-button-props="{ props: { disabled: true } }"
+    :cancel-button-props="{ props: { disabled: true } }"
   >
+    <div style="width: 100%; display: flex; padding-bottom: 20px">
+      <a-icon
+        style="font-size: 20px; cursor: pointer; color: purple; padding: 0 10px"
+        type="car"
+      />
+      SHIPPING
+      <a-icon
+        style="font-size: 20px; cursor: pointer; color: red; padding: 0 10px"
+        type="close-circle"
+      />
+      CANCEL
+      <a-icon
+        style="
+          font-size: 20px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+          color: green;
+          padding: 0 10px;
+        "
+        type="check-circle"
+      />
+      DONE
+      <a-icon
+        style="font-size: 20px; cursor: pointer; color: blue; padding: 0 10px"
+        type="check"
+      />
+      CONFIRM
+    </div>
+
     <a-spin :spinning="loading">
       <a-table :columns="columns" :data-source="ordersRender">
         <a-tag slot="status" slot-scope="text" :color="setStatusColor(text)">
@@ -19,22 +50,36 @@
           >{{ text.username }}</span
         >
         <span slot="price" slot-scope="text">{{ formatPrice(text) }}</span>
+        <div
+          slot="products"
+          slot-scope="record"
+          style="max-width: 250px; display: flex; flex-wrap: wrap"
+        >
+          <a-tag
+            v-for="(item, index) in record"
+            :key="index"
+            style="margin: 5px"
+            color="#D48459"
+          >
+            {{ item.productName }}
+          </a-tag>
+        </div>
         <span slot="action" slot-scope="record">
           <template v-if="record.status === 'CONFIRM'">
             <a-icon
               style="
                 font-size: 20px;
                 cursor: pointer;
-                color: blue;
+                color: purple;
                 padding-right: 10px;
               "
               type="car"
-              @click="handleClick(record, 'SHIPPING')"
+              @click="confirmBeforeChange(record, 'SHIPPING')"
             />
             <a-icon
               style="font-size: 20px; cursor: pointer; color: red"
               type="close-circle"
-              @click="handleClick(record, 'CANCEL')"
+              @click="confirmBeforeChange(record, 'CANCEL')"
             />
           </template>
           <template v-if="record.status === 'SHIPPING'">
@@ -48,7 +93,7 @@
                 color: green;
               "
               type="check-circle"
-              @click="handleClick(record, 'DONE')"
+              @click="confirmBeforeChange(record, 'DONE')"
             />
           </template>
           <template v-if="record.status === 'WAITING'">
@@ -60,12 +105,12 @@
                 padding-right: 10px;
               "
               type="check"
-              @click="handleClick(record, 'CONFIRM')"
+              @click="confirmBeforeChange(record, 'CONFIRM')"
             />
             <a-icon
               style="font-size: 20px; cursor: pointer; color: red"
               type="close-circle"
-              @click="handleClick(record, 'CANCEL')"
+              @click="confirmBeforeChange(record, 'CANCEL')"
             />
           </template>
         </span>
@@ -75,12 +120,6 @@
 </template>
 <script>
 const columns = [
-  {
-    title: 'Order Code',
-    dataIndex: 'orderName',
-    key: 'orderName',
-    scopedSlots: { customRender: 'code' },
-  },
   {
     title: 'Customer Name',
     dataIndex: 'user',
@@ -115,6 +154,12 @@ const columns = [
     scopedSlots: { customRender: 'status' },
   },
   {
+    title: 'Product List',
+    dataIndex: 'products',
+    key: 'products',
+    scopedSlots: { customRender: 'products' },
+  },
+  {
     title: '',
     key: 'action',
     scopedSlots: { customRender: 'action' },
@@ -133,6 +178,18 @@ export default {
     showModal(apiPath, status) {
       this.getOrderWaiting(apiPath, status)
       this.visible = true
+    },
+    confirmBeforeChange(order, status) {
+      this.$confirm({
+        title: 'Are you sure to confirm this status ? ',
+        content: 'Please check before change status ?',
+        okText: 'Submit',
+        cancelText: 'Cancel',
+        onOk: () => {
+          this.handleClick(order, status)
+          this.visible = false
+        },
+      })
     },
     async getOrderWaiting(apiPath, status) {
       if (apiPath === 'order') {
@@ -230,7 +287,6 @@ export default {
           }
         } finally {
           this.loading = false
-          this.visible = false
           this.$emit('refreshData')
         }
       }
@@ -284,14 +340,9 @@ export default {
           }
         } finally {
           this.loading = false
-          this.visible = false
           this.$emit('refreshData')
         }
       }
-    },
-    close(e) {
-      this.visible = false
-      this.orderRender = []
     },
     editOrder(id) {
       this.$emit('editOrder', id)
