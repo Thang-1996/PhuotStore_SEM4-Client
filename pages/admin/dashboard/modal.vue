@@ -49,7 +49,7 @@
           style="text-transform: capitalize"
           >{{ text.username }}</span
         >
-        <span slot="price" slot-scope="text">{{ formatPrice(text) }}</span>
+        <span slot="totalPrice" slot-scope="text">{{ formatPrice(text) }}</span>
         <div
           slot="products"
           slot-scope="record"
@@ -140,7 +140,7 @@ const columns = [
     title: 'Grand Total',
     dataIndex: 'totalPrice',
     key: 'totalPrice',
-    scopedSlots: { customRender: 'price' },
+    scopedSlots: { customRender: 'totalPrice' },
   },
   {
     title: 'Payment Type',
@@ -210,7 +210,6 @@ export default {
         }
       } else {
         try {
-          this.orderRender = []
           this.loading = true
           const result = await this.$api.filterRentByStatus(status, {
             headers: {

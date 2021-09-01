@@ -108,9 +108,13 @@
                 </td>
                 <td data-title="Quantity">{{ item.quantity }}</td>
                 <td data-title="Total">
-                  <strong v-if="!rentDate">{{
-                    formatPrice(item.product.price * item.quantity)
-                  }}</strong>
+                  <strong v-if="!rentDate"
+                    >{{
+                      formatPrice(
+                        Number(item.product.price) * Number(item.quantity)
+                      )
+                    }}
+                  </strong>
                   <strong v-else>{{
                     formatPrice(item.product.rental * item.quantity)
                   }}</strong>
@@ -288,16 +292,21 @@ export default {
           }
           this.billingDetails.totalQuantity += Number(item.quantity)
           this.billingDetails.totalPrice += itemPer
-          this.billingDetails.totalPrice =
-            this.billingDetails.totalPrice *
-            this.$moment(this.rentDate.endDate).diff(
-              this.$moment(this.rentDate.startDate),
-              'days'
-            )
+
           this.billingDetails.product.push(item.product.productID)
           this.billingDetails.userID = user.userID
           this.billingDetails.orderName = generateHash()
-          this.deposist = this.billingDetails.totalPrice * 10
+          if (this.rentDate) {
+            this.billingDetails.totalPrice =
+              this.billingDetails.totalPrice *
+              this.$moment(this.rentDate.endDate).diff(
+                this.$moment(this.rentDate.startDate),
+                'days'
+              )
+            this.deposist = this.billingDetails.totalPrice * 10
+          }
+
+          console.log(this.billingDetails)
           const paypalItem = {
             name: item.product.productName,
             description: item.product.productDesc,

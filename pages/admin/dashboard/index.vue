@@ -124,7 +124,6 @@ export default {
       rentorderConfirm: '',
       rentordersCancel: '',
       rentrevenue: 0,
-      orderRender: [],
     }
   },
   async created() {
