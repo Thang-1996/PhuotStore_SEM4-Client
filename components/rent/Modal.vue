@@ -273,6 +273,7 @@ export default {
     },
     handleChangeRentalStart(date) {
       if (this.order && date !== null) {
+        const oldPrice = this.order.totalPrice / this.order.bookingDate
         this.order.rentalStart = date
         this.orderUpdate.rentalStart = date
 
@@ -280,12 +281,16 @@ export default {
           date,
           'days'
         )
+        this.order.totalPrice =
+          oldPrice * this.$moment(this.order.rentalEnd).diff(date, 'days')
+        this.orderUpdate.totalPrice = this.order.totalPrice
         this.orderUpdate.bookingDate = this.order.bookingDate
       }
     },
 
     handleChangeRentalEnd(date) {
       if (this.order && date !== null) {
+        const oldPrice = this.order.totalPrice / this.order.bookingDate
         this.order.rentalEnd = date
         this.orderUpdate.rentalEnd = date
         this.order.bookingDate = date.diff(
@@ -295,6 +300,9 @@ export default {
         if (this.$moment(this.orderUpdate.rentalEnd).isAfter(this.$moment())) {
           this.orderUpdate.status = 'RENTING'
         }
+        this.order.totalPrice =
+          oldPrice * date.diff(this.$moment(this.order.rentalStart), 'days')
+        this.orderUpdate.totalPrice = this.order.totalPrice
         this.orderUpdate.bookingDate = this.order.bookingDate
       }
     },

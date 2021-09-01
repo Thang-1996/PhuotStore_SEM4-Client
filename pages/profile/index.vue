@@ -701,7 +701,6 @@ export default {
           },
         })
         this.orderList = [...result.content]
-        console.log(result.content)
       } catch (e) {
         if (e.response.data) {
           this.$message.warning(e.response.data.details)
@@ -800,7 +799,6 @@ export default {
         })
         this.orderRent = { ...result }
         this.dataRent = [...result.products].reduce((acc, item) => {
-          console.log(acc)
           const product = {
             productDesc: item.productDesc,
             productName: item.productName,
