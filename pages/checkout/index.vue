@@ -307,7 +307,6 @@ export default {
                 this.$moment(this.rentDate.startDate),
                 'days'
               )
-            this.deposist = item.product.rental * item.quantity * 5
           }
 
           const paypalItem = {
