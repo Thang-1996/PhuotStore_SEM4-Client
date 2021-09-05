@@ -109,7 +109,6 @@ export default {
         }
         this.$message.success(`Add To Cart Successfully!`)
         localStorage.setItem('cart', JSON.stringify(cart))
-        this.$store.dispatch('setCount', cart.length)
       }
     },
     formatPrice(money) {

@@ -6,12 +6,12 @@
           <ul class="sigma_header-top-links">
             <li class="menu-item">
               <a href="tel:+123456789">
-                <i class="fal fa-phone"></i> (+123) 123 4567 890</a
+                <i class="fal fa-phone"></i> (+84) 123 4567 890</a
               >
             </li>
             <li class="menu-item">
               <a href="mailto:info@example.com">
-                <i class="fal fa-envelope"></i> info@example.com</a
+                <i class="fal fa-envelope"></i> phuotstore@gmail.com</a
               >
             </li>
           </ul>
@@ -62,13 +62,7 @@
 
           <div class="sigma_header-controls style-2">
             <ul class="sigma_header-controls-inner">
-              <li>
-                <a
-                  href="contact-us.html"
-                  class="d-none d-lg-block sigma_btn-custom"
-                  >Book Today!</a
-                >
-              </li>
+              <li></li>
               <li>
                 <nuxt-link to="/cart" class="d-none d-lg-block sigma_btn-custom"
                   >Cart
@@ -103,6 +97,10 @@ export default {
         {
           name: 'About',
           path: '/about',
+        },
+        {
+          name: 'Blog',
+          path: '/blog',
         },
         {
           name: 'Shop',

@@ -1,143 +1,126 @@
 <template>
-  <div>
-    <!-- About start -->
-    <section class="section">
-      <div class="container">
-        <div class="row align-items-center">
-          <div class="col-lg-4 d-none d-lg-block">
-            <img src="assets/img/about.jpg" alt="service" />
-          </div>
-          <div class="col-lg-8">
-            <div class="mr-lg-30">
-              <div class="section-title text-left">
-                <h4 class="title">Giúp Trải nghiệm cắm trại của bạn thú vị</h4>
-              </div>
-              <div class="row">
-                <div class="col-lg-6 mb-lg-30">
-                  <p>
-                    Thay vì một chuyến nghỉ dưỡng xa hoa, và cao cấp bạn có thể
-                    trại nghiệm tự nhiên trong lành với chi phí vừa phải giúp
-                    bạn vừa có một chuyến đi chơi bằng cách mua những đồ dùng hỗ
-                    trợ của chúng tôi
-                  </p>
-                  <p>Còn chần chờ gì mà không khám phá ngay</p>
-
-                  <nuxt-link :to="{ path: `/shop` }" class="sigma_btn-custom"
-                    >Shop Now</nuxt-link
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- About end -->
-    <!-- Counter & Video End -->
-    <!-- Blog Start -->
-    <div class="col-lg-12">
-      <!-- Product Count & Orderby Start -->
-      <div class="section-title text-center">
-        <h4 class="title">Sản phẩm nổi bật</h4>
-      </div>
-      <!-- Product Count & Orderby End -->
-
-      <div class="row masonry">
-        <div
-          v-for="(product, index) in products"
-          :key="index"
-          class="col-md-4 col-sm-6 masonry-item"
-        >
-          <div class="sigma_product">
-            <div class="sigma_product-thumb">
-              <nuxt-link :to="{ path: `/shop/${product.productID}` }"
-                ><img
-                  style="width: 100%; height: 300px"
-                  :src="JSON.parse(product.images)[0]"
-                  alt="product"
-              /></nuxt-link>
-              <div class="sigma_product-controls">
-                <a href="#" data-toggle="tooltip" title="Wishlist">
-                  <i class="far fa-heart"></i>
-                </a>
-                <a
-                  data-toggle="tooltip"
-                  title="Add To Cart"
-                  @click="addToCard(product)"
+  <div class="section sigma_post-single">
+    <div class="container">
+      <div class="row">
+        <div>
+          <div class="post-detail-wrapper">
+            <div class="entry-content">
+              <h4 class="entry-title">{{ blog && blog.title }}</h4>
+              <div class="sigma_post-meta">
+                <a href="blog-details.html">
+                  <i class="far fa-calendar"></i>Admin /
+                  {{ blog && blog.createAt }}</a
                 >
-                  <i class="far fa-shopping-basket"></i>
-                </a>
-                <a href="#" data-toggle="tooltip" title="Quick View">
-                  <i
-                    data-toggle="modal"
-                    data-target="#quickViewModal"
-                    class="far fa-eye"
-                  ></i>
-                </a>
+              </div>
+
+              <p>
+                {{ blog && blog.description }}
+              </p>
+              <div v-for="(item, index) in blog.content" :key="index">
+                <p>
+                  {{ blog && item }}
+                </p>
+                <img
+                  :src="blog && blog.images[index]"
+                  style="width: 100%"
+                  alt="post"
+                />
               </div>
             </div>
-            <div class="sigma_product-body">
-              <h5 class="sigma_product-title">
-                <nuxt-link :to="{ path: `/shop/${product.productID}` }">{{
-                  product.productName
-                }}</nuxt-link>
-              </h5>
-              <div class="sigma_product-price">
-                <span>{{ formatPrice(product.price) }}</span>
+
+            <!-- Post Meta Start -->
+            <div class="sigma_post-single-meta">
+              <div class="sigma_post-single-meta-item">
+                <h6>Tags</h6>
+                <div class="tagcloud">
+                  <a href="#">Campa</a>
+                  <a href="#">Camping</a>
+                  <a href="#">Company</a>
+                </div>
+              </div>
+              <div class="sigma_post-single-meta-item sigma_post-share">
+                <h6>Share</h6>
+                <ul class="sigma_sm">
+                  <li>
+                    <a href="#">
+                      <i class="fab fa-facebook-f"></i>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <i class="fab fa-linkedin-in"></i>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <i class="fab fa-twitter"></i>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <i class="fab fa-youtube"></i>
+                    </a>
+                  </li>
+                </ul>
               </div>
             </div>
+            <!-- Post Meta End -->
+
+            <!-- Post Pagination Start -->
+            <div class="section"></div>
+            <!-- Post Pagination End -->
+
+            <!-- Related Posts Start -->
+            <div class="section">
+              <h5>Related Posts</h5>
+              <div class="row">
+                <!-- Article Start -->
+                <div
+                  v-for="item in blogsRelative"
+                  :key="item.id"
+                  class="col-md-6"
+                >
+                  <article class="sigma_post">
+                    <div class="sigma_post-thumb">
+                      <nuxt-link :to="{ path: `/blog/${blog.id}` }">
+                        <img
+                          :src="item.thumbnail"
+                          style="height: 380px"
+                          alt="post"
+                        />
+                      </nuxt-link>
+                    </div>
+                    <div class="sigma_post-body">
+                      <div class="sigma_post-meta">
+                        <nuxt-link
+                          :to="{ path: `/blog/${blog.id}` }"
+                          class="sigma_post-date"
+                        >
+                          <i class="far fa-calendar"></i>
+                          {{ item.createAt }}</nuxt-link
+                        >
+                      </div>
+                      <h5>
+                        <nuxt-link :to="{ path: `/blog/${blog.id}` }">{{
+                          item.title
+                        }}</nuxt-link>
+                      </h5>
+                      <p>
+                        {{ item.description }}
+                      </p>
+                    </div>
+                  </article>
+                </div>
+                <!-- Article End -->
+              </div>
+            </div>
+            <!-- Related Posts End -->
           </div>
         </div>
       </div>
     </div>
-    <div class="section section-padding pt-0" style="margin-top: 100px">
-      <div class="container">
-        <div class="section-title text-center">
-          <h4 class="title">Blog</h4>
-        </div>
-        <div class="row">
-          <!-- Article Start -->
-          <div v-for="blog in blogs" :key="blog.id" class="col-lg-4 col-md-6">
-            <article class="sigma_post">
-              <div class="sigma_post-thumb">
-                <nuxt-link :to="{ path: `/blog/${blog.id}` }">
-                  <img :src="blog.thumbnail" style="height: 300px" alt="post" />
-                </nuxt-link>
-              </div>
-              <div class="sigma_post-body" style="height: 500px">
-                <div style="height: 370px">
-                  <h5>
-                    <nuxt-link :to="{ path: `/blog/${blog.id}` }">{{
-                      blog.title
-                    }}</nuxt-link>
-                  </h5>
-                  <p>
-                    {{ blog.description }}
-                  </p>
-                </div>
-
-                <div class="sigma_post-footer">
-                  <nuxt-link :to="{ path: `/blog/${blog.id}` }"
-                    >Admin - {{ blog.createAt }}</nuxt-link
-                  >
-                  <nuxt-link
-                    :to="{ path: `/blog/${blog.id}` }"
-                    class="btn-link"
-                  >
-                    Read More <i class="far fa-arrow-right"></i>
-                  </nuxt-link>
-                </div>
-              </div>
-            </article>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Blog End -->
   </div>
 </template>
-
 <script>
 const blogs = [
   {
@@ -276,48 +259,17 @@ export default {
   data() {
     return {
       blogs,
-      products: [],
+      blog: null,
+      blogsRelative: [],
     }
   },
-  async created() {
-    await this.loadPage()
-  },
-  methods: {
-    async loadPage() {
-      const products = await this.$api.productList({
-        headers: {
-          Authorization: this.$auth.$storage.getUniversal('token').token,
-        },
-      })
-      this.products = products.content.slice(0, 6)
-    },
-    addToCard(product) {
-      if (process.browser) {
-        let cart = localStorage.getItem('cart')
-        if (cart === null) cart = []
-        else cart = JSON.parse(cart)
-        let count = 0
-        for (let i = 0; i < cart.length; i++) {
-          if (cart[i].product.productID === product.productID) {
-            if (cart[i].quantity < product.qty) {
-              cart[i].quantity++
-            }
-            count++
-          }
-        }
-        if (count === 0) {
-          cart.push({ product, quantity: 1 })
-        }
-        this.$message.success(`Add To Cart Successfully!`)
-        localStorage.setItem('cart', JSON.stringify(cart))
-      }
-    },
-    formatPrice(money) {
-      return new Intl.NumberFormat('vi-VN', {
-        style: 'currency',
-        currency: 'VND',
-      }).format(money)
-    },
+  created() {
+    this.blog = [...this.blogs].find(
+      (item) => item.id === Number(this.$route.params.id)
+    )
+    this.blogsRelative = [...this.blogs].filter(
+      (item) => item.id !== Number(this.$route.params.id)
+    )
   },
 }
 </script>

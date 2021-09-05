@@ -78,20 +78,22 @@
           <div class="container">
             <div class="row align-items-center">
               <div class="col-lg-6">
-                <h4 class="text-white">PhuotStore </h4>
+                <h4 class="text-white">PhuotStore</h4>
                 <h1 class="title text-white"></h1>
                 <p>
-                  Chuyên Nhập Khẩu, Phân Phối nhiều Thương Hiệu nổi tiếng tại Việt Nam . Với mong muốn mang lại những sản phẩm tốt nhất cho những người mê du lịch tại Việt Nam.
+                  Chuyên Nhập Khẩu, Phân Phối nhiều Thương Hiệu nổi tiếng tại
+                  Việt Nam . Với mong muốn mang lại những sản phẩm tốt nhất cho
+                  những người mê du lịch tại Việt Nam.
                 </p>
                 <div class="section-button d-flex align-items-center">
-                  <a href="about-us.html" class="sigma_btn-custom"
+                  <nuxt-link to="/about" class="sigma_btn-custom"
                     >Về Công ty chúng tôi
-                  </a>
-                  <a
-                    href="contact-us.html"
+                  </nuxt-link>
+                  <nuxt-link
+                    to="/contact"
                     class="ml-3 sigma_btn-custom secondary"
                     >Nhắn tin để được tư vấn
-                  </a>
+                  </nuxt-link>
                 </div>
               </div>
             </div>
