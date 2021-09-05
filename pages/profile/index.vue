@@ -241,6 +241,19 @@
         <div v-else>
           <h6 style="color: #d48459; text-align: center">ORDER LIST</h6>
           <a-table :columns="columns" :data-source="orderList">
+            <a-tag
+              slot="status"
+              slot-scope="text"
+              :color="setOrderStatusColor(text)"
+            >
+              {{ text }}</a-tag
+            >
+            <span slot="totalPrice" slot-scope="text">
+              {{ formatPrice(text) }}
+            </span>
+            <span slot="createAt" slot-scope="text">
+              {{ $moment(text).format('YYYY-MM-DD') }}
+            </span>
             <span slot="action" slot-scope="record">
               <a-button type="primary" @click="editOrder(record.orderID)"
                 ><a-icon type="edit"
@@ -460,6 +473,51 @@
               This Status Have No Order Rent
             </p>
           </a-tab-pane>
+          <a-tab-pane key="RENTING" tab="RENTING">
+            <a-list
+              v-if="orderRent.status === 'RENTING'"
+              item-layout="horizontal"
+              :data-source="dataRent"
+            >
+              <a-list-item slot="renderItem" slot-scope="item">
+                <a-list-item-meta :description="item.productDesc">
+                  <a slot="title">{{ item.productName }}</a>
+                  <a-avatar slot="avatar" src="assets/img/products/0.jpg" />
+                </a-list-item-meta>
+                <div style="margin-right: 20px; color: #d48459">
+                  Brand : {{ item.brand }}
+                </div>
+                <div style="margin-right: 20px; color: #d48459">
+                  Category : {{ item.category }}
+                </div>
+                <div style="color: #d48459">
+                  {{ formatPrice(item.rental) }}
+                </div>
+              </a-list-item>
+
+              <div style="display: flex; justify-content: space-between">
+                <p style="color: #d48459">{{ dataRent.length }} product</p>
+                <p style="color: #d48459">
+                  Total Price : {{ formatPrice(orderRent.totalPrice) }}
+                </p>
+              </div>
+              <div style="display: flex; justify-content: space-between">
+                <p style="color: #d48459">Order has been renting now</p>
+              </div>
+              <div style="display: flex; justify-content: space-between">
+                <p style="color: #d48459">
+                  Have you want change the billing infomation please click Edit,
+                  or click the cancel to cancel the order
+                </p>
+                <a-button type="primary" @click="visible = true">
+                  Edit Rent</a-button
+                >
+              </div>
+            </a-list>
+            <p v-else style="color: #d48459; text-align: center">
+              This Status Have No Order Rent
+            </p>
+          </a-tab-pane>
           <a-button slot="tabBarExtraContent" @click="backToListRent">
             <a-icon type="arrow-left" /> Back To List
           </a-button>
@@ -467,6 +525,23 @@
         <div v-else>
           <h6 style="color: #d48459; text-align: center">ORDER LIST</h6>
           <a-table :columns="columnsRent" :data-source="orderRentList">
+            <a-tag
+              slot="status"
+              slot-scope="text"
+              :color="setStatusColor(text)"
+            >
+              {{ text }}</a-tag
+            >
+            <span slot="totalPrice" slot-scope="text">
+              {{ formatPrice(text) }}
+            </span>
+            <span slot="rentalStart" slot-scope="text">
+              {{ $moment(text).format('YYYY-MM-DD') }}
+            </span>
+            <span slot="rentalEnd" slot-scope="text">
+              {{ $moment(text).format('YYYY-MM-DD') }}
+            </span>
+            <span slot="bookingDate" slot-scope="text"> {{ text }} days </span>
             <span slot="action" slot-scope="record">
               <a-button
                 type="primary"
@@ -511,6 +586,7 @@ const columns = [
     title: 'Grand Total',
     dataIndex: 'totalPrice',
     key: 'totalPrice',
+    scopedSlots: { customRender: 'totalPrice' },
   },
   {
     title: 'Total Quantity',
@@ -521,18 +597,15 @@ const columns = [
     title: 'Pay Date',
     dataIndex: 'createAt',
     key: 'createAt',
-    scopedSlots: { customRender: 'payDate' },
+    scopedSlots: { customRender: 'createAt' },
   },
   {
     title: 'Status',
     dataIndex: 'status',
     key: 'status',
+    scopedSlots: { customRender: 'status' },
   },
-  {
-    title: 'Order Note',
-    dataIndex: 'note',
-    key: 'note',
-  },
+
   {
     title: 'Action',
     key: 'action',
@@ -554,6 +627,7 @@ const columnsRent = [
     title: 'Grand Total',
     dataIndex: 'totalPrice',
     key: 'totalPrice',
+    scopedSlots: { customRender: 'totalPrice' },
   },
   {
     title: 'Total Quantity',
@@ -564,21 +638,25 @@ const columnsRent = [
     title: 'Rent Start',
     dataIndex: 'rentalStart',
     key: 'rentalStart',
+    scopedSlots: { customRender: 'rentalStart' },
   },
   {
-    title: 'Deposits',
-    dataIndex: 'deposits',
-    key: 'deposits',
+    title: 'Rent End',
+    dataIndex: 'rentalEnd',
+    key: 'rentalEnd',
+    scopedSlots: { customRender: 'rentalEnd' },
+  },
+  {
+    title: 'Rent Days',
+    dataIndex: 'bookingDate',
+    key: 'bookingDate',
+    scopedSlots: { customRender: 'bookingDate' },
   },
   {
     title: 'Status',
     dataIndex: 'status',
     key: 'status',
-  },
-  {
-    title: 'Order Note',
-    dataIndex: 'note',
-    key: 'note',
+    scopedSlots: { customRender: 'status' },
   },
   {
     title: 'Action',
@@ -829,7 +907,7 @@ export default {
           orderRentName: result.orderRentName,
           phone: result.phone,
           shippingAddress: result.shippingAddress,
-          deposits: result.deposits,
+          bookingDate: result.bookingDate,
           rentalStart: result.rentalStart,
           rentalEnd: result.rentalEnd,
           lastName: result.lastName,
@@ -878,9 +956,20 @@ export default {
         this.visible = false
       }
     },
-    async handleRentOk(e) {
+    async rentingOrder() {
       try {
         this.loading = true
+        const newDiffDay = this.orderRentUpdate.rentalEnd.diff(
+          this.$moment(this.orderRentUpdate.rentalStart),
+          'days'
+        )
+        const oneOfMoney =
+          this.orderRentUpdate.totalPrice / this.orderRentUpdate.bookingDate
+        const newMoney =
+          oneOfMoney * (newDiffDay - this.orderRentUpdate.bookingDate)
+        this.orderRentUpdate.totalPrice =
+          Number(this.orderRentUpdate.totalPrice) + newMoney
+        this.orderRentUpdate.bookingDate = newDiffDay
         await this.$api.updateRent(this.orderRentID, this.orderRentUpdate, {
           headers: {
             Authorization: this.$auth.$storage.getUniversal('token').token,
@@ -895,6 +984,14 @@ export default {
         await this.editOrderRent(this.orderRentID)
         this.visible = false
       }
+    },
+    handleRentOk(e) {
+      this.$confirm({
+        title: 'Update Order Rent ? ',
+        content:
+          'Do you sure want to renting the order it will change the total payment ? ',
+        onOk: () => this.rentingOrder(),
+      })
     },
     disabledEndDate(endValue) {
       const startValue = this.$moment(this.orderRentUpdate.rentalEnd)
@@ -938,6 +1035,38 @@ export default {
         this.loading = false
         await this.editOrderRent(this.orderRentID)
       }
+    },
+    setStatusColor(text) {
+      let color = ''
+      if (text === 'WAITING') {
+        color = '#ebc638'
+      } else if (text === 'CONFIRM') {
+        color = 'purple'
+      } else if (text === 'SHIPPING') {
+        color = 'blue'
+      } else if (text === 'DONE') {
+        color = 'green'
+      } else if (text === 'EXPIRED') {
+        color = 'purple'
+      } else {
+        color = 'red'
+      }
+      return color
+    },
+    setOrderStatusColor(text) {
+      let color = ''
+      if (text === 'WAITING') {
+        color = '#ebc638'
+      } else if (text === 'CONFIRM') {
+        color = 'purple'
+      } else if (text === 'SHIPPING') {
+        color = 'blue'
+      } else if (text === 'DONE') {
+        color = 'green'
+      } else {
+        color = 'red'
+      }
+      return color
     },
   },
 }

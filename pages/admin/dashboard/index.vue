@@ -96,7 +96,25 @@
         </a-card>
       </a-col>
     </a-row>
-    <DashboardModal ref="dashboard" @refreshData="refreshData" />
+    <a-row :gutter="16" style="margin-top: 40px">
+      <a-col :span="4">
+        <a-card
+          title="Almost Expired
+"
+          :bordered="false"
+        >
+          <a slot="extra" @click="showModalList('rent', 'almostExpired')"
+            ><a-icon type="profile" />
+          </a>
+          <span>{{ almostExpired }}</span>
+        </a-card>
+      </a-col>
+    </a-row>
+    <DashboardModal
+      ref="dashboard"
+      :almost-expired-rent="almostExpiredRent"
+      @refreshData="refreshData"
+    />
   </a-spin>
 </template>
 <script>
@@ -118,12 +136,14 @@ export default {
       ordersShipping: '',
       revenue: 0,
       rentorders: '',
+      almostExpired: '',
       rentordersSuccessfully: '',
       rentordersWaiting: '',
       rentordersShipping: '',
       rentorderConfirm: '',
       rentordersCancel: '',
       rentrevenue: 0,
+      almostExpiredRent: [],
     }
   },
   async created() {
@@ -196,6 +216,18 @@ export default {
         this.rentorderConfirm = result.content.filter(
           (item) => item.status === 'CONFIRM'
         ).length
+        const almostExpired = result.content.filter((item) => {
+          return (
+            this.$moment(item.rentalEnd).isBefore(this.$moment()) &&
+            this.$moment().diff(this.$moment(item.rentalEnd), 'days') < 2
+          )
+        })
+        const almostExpired2 = [...almostExpired].filter((item) => {
+          return item.status !== 'DONE' && item.status !== 'CANCEL'
+        })
+        console.log(almostExpired2)
+        this.almostExpired = almostExpired2.length
+        this.almostExpiredRent = almostExpired2
         result.content.forEach((item) => {
           const totalPrice = Number(item.totalPrice)
           this.rentrevenue += totalPrice

@@ -164,15 +164,15 @@
                 locale="en_US"
                 :button-style="myStyle"
                 :client="paypal"
-                :invoice-number="
-                  billingDetails.orderName || billingDetails.orderRentName
-                "
+                :items="myItems"
+                @payment-completed="payment_completed_cb"
               >
                 >
               </paypal-checkout>
             </no-ssr>
           </div>
           <button
+            v-else
             type="button"
             class="sigma_btn-custom primary btn-block"
             @click="payment()"
@@ -198,6 +198,7 @@ export default {
       grandTotal: 0,
       user: {},
       deposist: 0,
+      calcUSD: 0,
       billingDetails: {
         orderName: '',
         note: '',
@@ -233,11 +234,6 @@ export default {
         ? this.$auth.$storage.getUniversal('token').userID
         : ''
     },
-    calcUSD() {
-      return this.billingDetails.totalPrice > 0
-        ? `${Math.round(Number(this.billingDetails.totalPrice) / 23000)}`
-        : 1
-    },
     rentDate() {
       return this.$route.params.rentDate ? this.$route.params.rentDate : ''
     },
@@ -254,6 +250,13 @@ export default {
     await this.getCart()
   },
   methods: {
+    async payment_completed_cb(res) {
+      if (res.state === 'approved') {
+        this.billingDetails.paymentType = 'ONLINE'
+        this.billingDetails.status = 'SHIPPING'
+        await this.checkout()
+      }
+    },
     async getUserInfo() {
       this.loading = true
       try {
@@ -296,6 +299,7 @@ export default {
           this.billingDetails.product.push(item.product.productID)
           this.billingDetails.userID = user.userID
           this.billingDetails.orderName = generateHash()
+          this.calcUSD += item.quantity * Math.ceil(item.product.price / 23000)
           if (this.rentDate) {
             this.billingDetails.totalPrice =
               this.billingDetails.totalPrice *
@@ -306,12 +310,11 @@ export default {
             this.deposist = this.billingDetails.totalPrice * 10
           }
 
-          console.log(this.billingDetails)
           const paypalItem = {
             name: item.product.productName,
             description: item.product.productDesc,
             quantity: item.quantity,
-            price: Math.round(item.product.price / 23000).toString(),
+            price: Math.ceil(item.product.price / 23000).toString(),
             currency: 'USD',
           }
           this.myItems.push({ ...paypalItem })
@@ -348,6 +351,7 @@ export default {
             },
           })
         } else {
+          this.billingDetails.createAt = Date.now()
           await this.$api.orderPlace(this.billingDetails, {
             headers: {
               Authorization: this.$auth.$storage.getUniversal('token').token,

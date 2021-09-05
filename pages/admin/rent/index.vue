@@ -62,17 +62,10 @@ export default {
         this.loading = true
         setTimeout(() => {
           const data = [...this.data].filter((item) => {
-            return (
-              item.firstName.toLowerCase().includes(obj.search.toLowerCase()) ||
-              item.orderName.toLowerCase().includes(obj.search.toLowerCase()) ||
-              item.shippingAddress
-                .toLowerCase()
-                .includes(obj.search.toLowerCase()) ||
-              item.phone.toLowerCase().includes(obj.search.toLowerCase()) ||
-              item.lastName.toLowerCase().includes(obj.search.toLowerCase()) ||
-              item.email.toLowerCase().includes(obj.search.toLowerCase()) ||
-              item.note.toLowerCase().includes(obj.search.toLowerCase())
-            )
+            console.log(item)
+            return item.orderRentName
+              .toLowerCase()
+              .includes(obj.search.toLowerCase())
           })
           this.transformData(data)
           this.loading = false

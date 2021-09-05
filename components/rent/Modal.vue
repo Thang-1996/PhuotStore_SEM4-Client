@@ -10,7 +10,7 @@
     >
       <a-spin :spinning="loading">
         <a-descriptions title="Change Status" bordered>
-          <a-descriptions-item label="Choose Status" :span="3">
+          <a-descriptions-item label="Order Process" :span="3">
             <a-radio-group
               v-model="status"
               name="radioGroup"
@@ -45,20 +45,6 @@
               >
                 SHIPPING
               </a-radio>
-
-              <a-radio
-                :disabled="
-                  order &&
-                  (order.status === 'SHIPPING' || order.status === 'DONE')
-                "
-                value="CANCEL"
-                style="color: red"
-              >
-                CANCEL
-              </a-radio>
-              <a-radio value="EXPIRED" :disabled="true" style="color: orange">
-                EXPIRED
-              </a-radio>
               <a-radio value="RENTING" :disabled="true" style="color: #ab4f71">
                 RENTING
               </a-radio>
@@ -77,6 +63,27 @@
               </a-radio>
             </a-radio-group>
           </a-descriptions-item>
+          <a-descriptions-item label="Renting Process" :span="3">
+            <a-radio-group
+              v-model="status"
+              name="radioGroup"
+              @change="onChange"
+            >
+              <a-radio
+                :disabled="
+                  order &&
+                  (order.status === 'SHIPPING' || order.status === 'DONE')
+                "
+                value="CANCEL"
+                style="color: red"
+              >
+                CANCEL
+              </a-radio>
+              <a-radio value="EXPIRED" :disabled="true" style="color: orange">
+                EXPIRED
+              </a-radio>
+            </a-radio-group>
+          </a-descriptions-item>
         </a-descriptions>
         <a-descriptions title="Order Info" bordered>
           <a-descriptions-item label="Order Code" :span="3">
@@ -86,23 +93,11 @@
             {{ order ? order.user.username : '' }}
           </a-descriptions-item>
           <a-descriptions-item label="Rent StartDate" :span="2">
-            <span
-              v-if="
-                (order && order.status === 'DONE') ||
-                (order && order.status === 'SHIPPING')
-              "
-            >
+            <span>
               {{
                 order ? $moment(order.rentalStart).format('YYYY-MM-DD') : ''
               }}</span
             >
-            <div v-else>
-              <a-date-picker
-                v-if="order"
-                v-model="order.rentalStart"
-                @change="handleChangeRentalStart"
-              />
-            </div>
           </a-descriptions-item>
           <a-descriptions-item label="Total Rent Days" :span="2">
             {{ order ? order.bookingDate : '' }}
@@ -147,6 +142,9 @@
           <a-descriptions-item label="Grand Total" :span="3">
             {{ formatPrice(order ? order.totalPrice : 0) }}
           </a-descriptions-item>
+          <a-descriptions-item label="Extra Rent Money" :span="3">
+            <span>{{ formatPrice(extraMoney) }}</span>
+          </a-descriptions-item>
           <a-descriptions-item label="Product Info">
             <a-tag
               v-for="(item, index) in order ? order.products : []"
@@ -177,6 +175,7 @@ export default {
       orderUpdate: null,
       status: '',
       isCanChange: false,
+      extraMoney: 0,
     }
   },
   mounted() {
@@ -271,26 +270,11 @@ export default {
         onOk: () => this.updateOrder(),
       })
     },
-    handleChangeRentalStart(date) {
-      if (this.order && date !== null) {
-        const oldPrice = this.order.totalPrice / this.order.bookingDate
-        this.order.rentalStart = date
-        this.orderUpdate.rentalStart = date
-
-        this.order.bookingDate = this.$moment(this.order.rentalEnd).diff(
-          date,
-          'days'
-        )
-        this.order.totalPrice =
-          oldPrice * this.$moment(this.order.rentalEnd).diff(date, 'days')
-        this.orderUpdate.totalPrice = this.order.totalPrice
-        this.orderUpdate.bookingDate = this.order.bookingDate
-      }
-    },
 
     handleChangeRentalEnd(date) {
       if (this.order && date !== null) {
         const oldPrice = this.order.totalPrice / this.order.bookingDate
+        const oldBookingDate = this.order.bookingDate
         this.order.rentalEnd = date
         this.orderUpdate.rentalEnd = date
         this.order.bookingDate = date.diff(
@@ -304,6 +288,7 @@ export default {
           oldPrice * date.diff(this.$moment(this.order.rentalStart), 'days')
         this.orderUpdate.totalPrice = this.order.totalPrice
         this.orderUpdate.bookingDate = this.order.bookingDate
+        this.extraMoney = oldPrice * (this.order.bookingDate - oldBookingDate)
       }
     },
     async updateOrder() {

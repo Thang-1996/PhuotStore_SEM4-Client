@@ -65,7 +65,7 @@
           </a-tag>
         </div>
         <span slot="action" slot-scope="record">
-          <template v-if="record.status === 'CONFIRM'">
+          <template v-if="record.status === 'CONFIRM' && !almostExpired">
             <a-icon
               style="
                 font-size: 20px;
@@ -82,7 +82,7 @@
               @click="confirmBeforeChange(record, 'CANCEL')"
             />
           </template>
-          <template v-if="record.status === 'SHIPPING'">
+          <template v-if="record.status === 'SHIPPING' && !almostExpired">
             <a-icon
               style="
                 font-size: 20px;
@@ -96,7 +96,7 @@
               @click="confirmBeforeChange(record, 'DONE')"
             />
           </template>
-          <template v-if="record.status === 'WAITING'">
+          <template v-if="record.status === 'WAITING' && !almostExpired">
             <a-icon
               style="
                 font-size: 20px;
@@ -113,8 +113,25 @@
               @click="confirmBeforeChange(record, 'CANCEL')"
             />
           </template>
+          <template v-if="almostExpired">
+            <strong style="font-size: 20px">{{ record.orderRentName }}</strong>
+          </template>
         </span>
       </a-table>
+      <!--      <a-modal v-model="visibleEdit" title="Edit Rent Time" @ok="handleRentOk">-->
+      <!--        <a-form-model-->
+      <!--          :model="currentExpiredUpdate"-->
+      <!--          :label-col="{ span: 7 }"-->
+      <!--          :wrapper-col="{ span: 17 }"-->
+      <!--        >-->
+      <!--          <a-form-model-item label="Rent Date End">-->
+      <!--            <a-date-picker-->
+      <!--              v-model="currentExpiredUpdate.rentalEnd"-->
+      <!--              :disabled-date="disabledEndDate"-->
+      <!--            />-->
+      <!--          </a-form-model-item>-->
+      <!--        </a-form-model>-->
+      <!--      </a-modal>-->
     </a-spin>
   </a-modal>
 </template>
@@ -166,12 +183,23 @@ const columns = [
   },
 ]
 export default {
+  props: {
+    almostExpiredRent: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     return {
       loading: false,
       columns,
       visible: false,
+      visibleEdit: false,
       ordersRender: [],
+      almostExpired: false,
+      currentExpiredUpdate: {
+        rentalEnd: '',
+      },
     }
   },
   methods: {
@@ -193,6 +221,7 @@ export default {
     },
     async getOrderWaiting(apiPath, status) {
       if (apiPath === 'order') {
+        this.almostExpired = false
         try {
           this.loading = true
           const result = await this.$api.filterOrderByStatus(status, {
@@ -208,7 +237,11 @@ export default {
         } finally {
           this.loading = false
         }
+      } else if (status === 'almostExpired') {
+        this.almostExpired = true
+        this.ordersRender = this.almostExpiredRent
       } else {
+        this.almostExpired = false
         try {
           this.loading = true
           const result = await this.$api.filterRentByStatus(status, {
@@ -226,6 +259,63 @@ export default {
         }
       }
     },
+    // async rentingOrder() {
+    //   try {
+    //     const productEdit = []
+    //     // eslint-disable-next-line no-unused-expressions
+    //     this.currentExpiredUpdate.products.length
+    //       ? this.currentExpiredUpdate.products.forEach((item) => {
+    //           productEdit.push(item.productID)
+    //         })
+    //       : []
+    //     const comboEdit = []
+    //     // eslint-disable-next-line no-unused-expressions
+    //     this.currentExpiredUpdate.combos.length
+    //       ? this.currentExpiredUpdate.combos.forEach((item) => {
+    //           comboEdit.push(item.comboID)
+    //         })
+    //       : []
+    //     const newDiffDay = this.currentExpiredUpdate.rentalEnd.diff(
+    //       this.$moment(this.currentExpiredUpdate.rentalStart),
+    //       'days'
+    //     )
+    //     const oneOfMoney =
+    //       this.currentExpiredUpdate.totalPrice /
+    //       this.currentExpiredUpdate.bookingDate
+    //     const newMoney =
+    //       oneOfMoney * (newDiffDay - this.currentExpiredUpdate.bookingDate)
+    //     this.currentExpiredUpdate.totalPrice =
+    //       Number(this.currentExpiredUpdate.totalPrice) + newMoney
+    //     this.currentExpiredUpdate.bookingDate = newDiffDay
+    //     this.currentExpiredUpdate.products = productEdit
+    //     this.currentExpiredUpdate.combos = comboEdit
+    //     this.currentExpiredUpdate.userID = this.currentExpiredUpdate.user.userID
+    //     this.currentExpiredUpdate.deposits = 0
+    //     this.currentExpiredUpdate.status = 'RENTING'
+    //     delete this.currentExpiredUpdate.user
+    //     const newUpdate = { ...this.currentExpiredUpdate }
+    //     await this.$api.updateRent(newUpdate.orderRentID, newUpdate, {
+    //       headers: {
+    //         Authorization: this.$auth.$storage.getUniversal('token').token,
+    //       },
+    //     })
+    //   } catch (e) {
+    //     if (e.response.data) {
+    //       this.$message.warning(e.response.data.details)
+    //     }
+    //   } finally {
+    //     this.visibleEdit = false
+    //     this.$emit('refreshData')
+    //   }
+    // },
+    // handleRentOk() {
+    //   this.$confirm({
+    //     title: 'Update Order Rent ? ',
+    //     content:
+    //       'Do you sure want to renting the order it will change the total payment ? ',
+    //     onOk: () => this.rentingOrder(),
+    //   })
+    // },
     handleOk(e) {
       this.visible = false
     },
@@ -351,6 +441,21 @@ export default {
         style: 'currency',
         currency: 'VND',
       }).format(money)
+    },
+    updateExpired(id) {
+      this.visibleEdit = true
+      this.currentExpiredUpdate = [...this.almostExpiredRent].find(
+        (item) => item.orderRentID === id
+      )
+    },
+    disabledEndDate(endValue) {
+      if (this.currentExpiredUpdate) {
+        const startValue = this.$moment(this.currentExpiredUpdate.rentalEnd)
+        if (!endValue || !startValue) {
+          return false
+        }
+        return startValue.valueOf() >= endValue.valueOf()
+      }
     },
     setStatusColor(text) {
       let color = ''
