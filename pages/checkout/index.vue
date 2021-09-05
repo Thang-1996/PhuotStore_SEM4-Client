@@ -294,21 +294,26 @@ export default {
             itemPer = Number(item.product.price * item.quantity)
           }
           this.billingDetails.totalQuantity += Number(item.quantity)
-          this.billingDetails.totalPrice += itemPer
-
+          this.billingDetails.totalPrice += Number(itemPer)
           this.billingDetails.product.push(item.product.productID)
           this.billingDetails.userID = user.userID
           this.billingDetails.orderName = generateHash()
           this.calcUSD += item.quantity * Math.ceil(item.product.price / 23000)
           if (this.rentDate) {
+            this.billingDetails.rentalStart = this.$moment(
+              this.rentDate.startDate
+            )
+            this.billingDetails.rentalEnd = this.$moment(this.rentDate.endDate)
+            this.billingDetails.bookingDate = this.$moment(
+              this.rentDate.endDate
+            ).diff(this.$moment(this.rentDate.startDate), 'days')
+            this.deposist =
+              (this.billingDetails.totalPrice /
+                this.billingDetails.bookingDate) *
+              5
             this.billingDetails.totalPrice =
-              this.billingDetails.totalPrice *
-              this.$moment(this.rentDate.endDate).diff(
-                this.$moment(this.rentDate.startDate),
-                'days'
-              )
+              Number(this.billingDetails.totalPrice) + Number(this.deposist)
           }
-
           const paypalItem = {
             name: item.product.productName,
             description: item.product.productDesc,
@@ -335,15 +340,6 @@ export default {
         if (this.rentDate) {
           delete this.billingDetails.orderName
           this.billingDetails.orderRentName = generateHash()
-          this.billingDetails.rentalStart = this.$moment(
-            this.rentDate.startDate
-          )
-          this.billingDetails.rentalEnd = this.$moment(this.rentDate.endDate)
-          this.billingDetails.bookingDate = this.$moment(
-            this.rentDate.endDate
-          ).diff(this.$moment(this.rentDate.startDate), 'days')
-          this.billingDetails.totalPrice =
-            Number(this.billingDetails.totalPrice) + Number(this.deposist)
           await this.$api.rentPlace(this.billingDetails, {
             headers: {
               Authorization: this.$auth.$storage.getUniversal('token').token,
