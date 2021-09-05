@@ -4,6 +4,7 @@
       {{ text }}</a-tag
     >
     <span slot="code" slot-scope="text">PS - {{ text }}</span>
+    <span slot="createAt" slot-scope="text">{{ text }}</span>
     <span slot="user" slot-scope="text" style="text-transform: capitalize">{{
       text.username
     }}</span>
@@ -44,6 +45,11 @@ const columns = [
     title: 'Email Address',
     dataIndex: 'email',
     key: 'email',
+  },
+  {
+    title: 'Order Time',
+    dataIndex: 'createAt',
+    key: 'createAt',
   },
   {
     title: 'Shipping Address',

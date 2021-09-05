@@ -99,6 +99,7 @@ export default {
           totalPrice: item.totalPrice,
           note: item.note,
           firstName: item.firstName,
+          createAt: this.$moment(item.createAt).format('YYYY-MM-DD'),
           lastName: item.lastName,
           email: item.email,
           address: item.shippingAddress,

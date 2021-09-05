@@ -7,6 +7,15 @@
     >
       {{ text === 'SHOW' ? 'SHOW' : 'HIDDEN' }}</a-tag
     >
+    <div slot="images" slot-scope="text">
+      <img :src="text" style="width: 300px; height: 100px" :alt="text" />
+    </div>
+    <span slot="price" slot-scope="text">
+      {{ formatPrice(text) }}
+    </span>
+    <span slot="rental" slot-scope="text">
+      {{ formatPrice(text) }}
+    </span>
     <span slot="action" slot-scope="record">
       <a-button
         type="primary"
@@ -34,14 +43,16 @@ const columns = [
     key: 'name',
   },
   {
+    title: 'Image',
+    dataIndex: 'images',
+    key: 'images',
+    scopedSlots: { customRender: 'images' },
+  },
+  {
     title: 'Description',
     dataIndex: 'desc',
     key: 'desc',
-  },
-  {
-    title: 'Discount',
-    dataIndex: 'discount',
-    key: 'discount',
+    width: '300px',
   },
   {
     title: 'Quantity',
@@ -52,11 +63,13 @@ const columns = [
     title: 'Price',
     dataIndex: 'price',
     key: 'price',
+    scopedSlots: { customRender: 'price' },
   },
   {
     title: 'Rental',
     dataIndex: 'rental',
     key: 'rental',
+    scopedSlots: { customRender: 'rental' },
   },
   {
     title: 'Category',
@@ -78,6 +91,7 @@ const columns = [
     title: 'Action',
     key: 'action',
     scopedSlots: { customRender: 'action' },
+    width: '130px',
   },
 ]
 
@@ -101,6 +115,12 @@ export default {
     },
     deleteProduct(id) {
       this.$emit('deleteProduct', id)
+    },
+    formatPrice(money) {
+      return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+      }).format(money)
     },
   },
 }

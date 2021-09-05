@@ -1,147 +1,16 @@
 <template>
-  <div>
-    <!-- About start -->
-    <section class="section">
-      <div class="container">
-        <div class="row align-items-center">
-          <div class="col-lg-4 d-none d-lg-block">
-            <img src="assets/img/about.jpg" alt="service" />
-          </div>
-          <div class="col-lg-8">
-            <div class="mr-lg-30">
-              <div class="section-title text-left">
-                <h4 class="title">Giúp Trải nghiệm cắm trại của bạn thú vị</h4>
-              </div>
-              <div class="row">
-                <div class="col-lg-6 mb-lg-30">
-                  <p>
-                    Thay vì một chuyến nghỉ dưỡng xa hoa, và cao cấp bạn có thể
-                    trại nghiệm tự nhiên trong lành với chi phí vừa phải giúp
-                    bạn vừa có một chuyến đi chơi bằng cách mua những đồ dùng hỗ
-                    trợ của chúng tôi
-                  </p>
-                  <p>Còn chần chờ gì mà không khám phá ngay</p>
-                </div>
-                <div class="col-lg-6 mb-lg-30" style="display: flex">
-                  <nuxt-link
-                    :to="{ path: `/shop` }"
-                    style="align-self: center"
-                    class="sigma_btn-custom"
-                    >Shop Now</nuxt-link
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- About end -->
-    <!-- Counter & Video End -->
-    <!-- Blog Start -->
-    <div class="col-lg-12">
-      <!-- Product Count & Orderby Start -->
-      <div class="section-title text-center">
-        <h4 class="title">Sản phẩm nổi bật</h4>
-      </div>
-      <!-- Product Count & Orderby End -->
-
-      <div class="row masonry">
-        <div
-          v-for="(product, index) in products"
-          :key="index"
-          class="col-md-4 col-sm-6 masonry-item"
-        >
-          <div class="sigma_product">
-            <div class="sigma_product-thumb">
-              <nuxt-link :to="{ path: `/shop/${product.productID}` }"
-                ><img
-                  style="width: 100%; height: 300px"
-                  :src="JSON.parse(product.images)[0]"
-                  alt="product"
-              /></nuxt-link>
-              <div class="sigma_product-controls">
-                <a href="#" data-toggle="tooltip" title="Wishlist">
-                  <i class="far fa-heart"></i>
-                </a>
-                <a
-                  data-toggle="tooltip"
-                  title="Add To Cart"
-                  @click="addToCard(product)"
-                >
-                  <i class="far fa-shopping-basket"></i>
-                </a>
-                <a href="#" data-toggle="tooltip" title="Quick View">
-                  <i
-                    data-toggle="modal"
-                    data-target="#quickViewModal"
-                    class="far fa-eye"
-                  ></i>
-                </a>
-              </div>
-            </div>
-            <div class="sigma_product-body">
-              <h5 class="sigma_product-title">
-                <nuxt-link :to="{ path: `/shop/${product.productID}` }">{{
-                  product.productName
-                }}</nuxt-link>
-              </h5>
-              <div class="sigma_product-price">
-                <span>{{ formatPrice(product.price) }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  <a-spin :spinning="loading">
+    <div class="category">
+      <a-card title="Search" class="card-category">
+        <blogFilter @search="search" />
+      </a-card>
+      <a-card title="Blog List" class="card-category-list">
+        <a-button slot="extra" type="primary"><a-icon type="plus" /></a-button>
+        <blogTable :blogs="blogsRender" />
+      </a-card>
     </div>
-    <div class="section section-padding pt-0" style="margin-top: 100px">
-      <div class="container">
-        <div class="section-title text-center">
-          <h4 class="title">Blog</h4>
-        </div>
-        <div class="row">
-          <!-- Article Start -->
-          <div v-for="blog in blogs" :key="blog.id" class="col-lg-4 col-md-6">
-            <article class="sigma_post">
-              <div class="sigma_post-thumb">
-                <nuxt-link :to="{ path: `/blog/${blog.id}` }">
-                  <img :src="blog.thumbnail" style="height: 300px" alt="post" />
-                </nuxt-link>
-              </div>
-              <div class="sigma_post-body" style="height: 500px">
-                <div style="height: 370px">
-                  <h5>
-                    <nuxt-link :to="{ path: `/blog/${blog.id}` }">{{
-                      blog.title
-                    }}</nuxt-link>
-                  </h5>
-                  <p>
-                    {{ blog.description }}
-                  </p>
-                </div>
-
-                <div class="sigma_post-footer">
-                  <nuxt-link :to="{ path: `/blog/${blog.id}` }"
-                    >Admin - {{ blog.createAt }}</nuxt-link
-                  >
-                  <nuxt-link
-                    :to="{ path: `/blog/${blog.id}` }"
-                    class="btn-link"
-                  >
-                    Read More <i class="far fa-arrow-right"></i>
-                  </nuxt-link>
-                </div>
-              </div>
-            </article>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Blog End -->
-  </div>
+  </a-spin>
 </template>
-
 <script>
 const blogs = [
   {
@@ -154,6 +23,7 @@ const blogs = [
       'https://file.hstatic.net/1000169629/file/di-cam-trai-ban-rom_9f1f1a447a4b444894e15e4469a04985.jpg',
       'https://file.hstatic.net/1000169629/file/s-nvh06856_a1e89c70810442b188adea05bdc9c964.jpg',
     ],
+    status: 'SHOW',
     createAt: 'September 1, 2021',
     content: [
       'Khu du lịch sinh thái Bản Rõm Sóc Sơn đúng nghĩa là một khu cắm trại rất phát triển hình thức du lịch với các dịch vụ cho thuê lều trại, bếp nướng hay những món đồ dùng cần thiết để các bạn có một ngày vui chơi trọn vẹn và đúng với không gian cắm trại nhất tại đây.\n' +
@@ -181,6 +51,7 @@ const blogs = [
       'https://armyhaus.com/wp-content/uploads/2019/01/carry-on-2_0.jpg',
       'https://armyhaus.com/wp-content/uploads/2019/01/2-2.jpg',
     ],
+    status: 'SHOW',
     createAt: 'September 2, 2021',
     content: [
       'Những người đã nhiều lần chuẩn bị những chuyến đi cắm trại, dã ngoại thường có lối tư duy tối giản đồ dùng cần thiết khi đi cắm trại. Với những kế hoặc và phụ kiện nâng cao, bạn có thể bắt đầu sắp xếp từ những thứ đơn giản như lều, túi ngủ.\n' +
@@ -222,6 +93,7 @@ const blogs = [
       'https://file.hstatic.net/1000169629/file/leu-trai1_578b013afe9840e788f41d3309f9b0cf.jpg',
       'https://file.hstatic.net/1000169629/file/rung-thong-o-ham-lon_c9e93654f4e4492ca3d8e102b5e54a57.jpg',
     ],
+    status: 'SHOW',
     createAt: 'August 20, 2021',
     content: [
       'Nếu như bạn đang nghĩ rằng du lịch Sóc Sơn không biết có những địa chỉ nào thú vị vào dịp cuối tuần thì hãy đến ngay núi Hàm Lợn ở Sóc Sơn để trải nghiệm nhé.Nằm cách xa trung tâm thành phố nhộn nhịp, tấp nập đến đây bạn có thể được trải nghiệm không gian núi non hùng vĩ, nét hoang sơ vốn có của núi rừng Sóc Sơn. Chính vì những nét hoang sơ, đường núi gồ ghề của nơi đây lại là nét thu hút rất nhiều các bạn trẻ ghé tới cắm trại. \n' +
@@ -277,50 +149,43 @@ const blogs = [
   },
 ]
 export default {
+  layout: 'admin',
   data() {
     return {
+      loading: false,
       blogs,
-      products: [],
+      blogsRender: [],
     }
   },
-  async created() {
-    await this.loadPage()
+  created() {
+    this.transformData(blogs)
   },
   methods: {
-    async loadPage() {
-      const products = await this.$api.productList({
-        headers: {
-          Authorization: this.$auth.$storage.getUniversal('token').token,
-        },
+    search(obj) {
+      const data = [...this.blogs].filter((item) => {
+        return item.title.toLowerCase().includes(obj.search.toLowerCase())
       })
-      this.products = products.content.slice(0, 6)
+      this.transformData(data)
     },
-    addToCard(product) {
-      if (process.browser) {
-        let cart = localStorage.getItem('cart')
-        if (cart === null) cart = []
-        else cart = JSON.parse(cart)
-        let count = 0
-        for (let i = 0; i < cart.length; i++) {
-          if (cart[i].product.productID === product.productID) {
-            if (cart[i].quantity < product.qty) {
-              cart[i].quantity++
-            }
-            count++
+    transformData(data) {
+      this.loading = true
+
+      setTimeout(() => {
+        this.blogsRender = [...data].reduce((acc, item, index) => {
+          const obj = {
+            key: index + 1,
+            id: item.id,
+            thumbnail: item.thumbnail,
+            title: item.title,
+            desc: item.description,
+            status: item.status,
           }
-        }
-        if (count === 0) {
-          cart.push({ product, quantity: 1 })
-        }
-        this.$message.success(`Add To Cart Successfully!`)
-        localStorage.setItem('cart', JSON.stringify(cart))
-      }
-    },
-    formatPrice(money) {
-      return new Intl.NumberFormat('vi-VN', {
-        style: 'currency',
-        currency: 'VND',
-      }).format(money)
+          acc.push(obj)
+          return acc
+        }, [])
+        this.loading = false
+        console.log(this.blogsRender)
+      }, 1000)
     },
   },
 }

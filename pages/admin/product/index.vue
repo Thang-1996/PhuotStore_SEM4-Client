@@ -65,6 +65,7 @@ export default {
           name: item.productName,
           desc: item.productDesc,
           status: item.status,
+          images: JSON.parse(item.images)[0],
           create_at: item.createAt,
           discount: item.discount,
           rental: item.rental,

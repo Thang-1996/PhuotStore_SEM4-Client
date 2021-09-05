@@ -38,25 +38,32 @@ const sideBar = [
   {
     path: '/admin/product',
     name: 'Product',
-    icon: 'shopping',
+    icon: 'code-sandbox',
     active: false,
   },
   {
     path: '/admin/brand',
     name: 'Brand',
-    icon: 'shopping',
+    icon: 'apple',
+    active: false,
+  },
+  {
+    path: '/admin/blog',
+    name: 'Blog',
+    icon: 'form',
     active: false,
   },
   {
     path: '/admin/order',
     name: 'Order',
-    icon: 'shopping',
+    icon: 'shopping-cart',
     active: false,
   },
+
   {
     path: '/admin/rent',
     name: 'Order Rent',
-    icon: 'calendar',
+    icon: 'shopping',
     active: false,
   },
 ]
