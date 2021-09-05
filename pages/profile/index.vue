@@ -252,7 +252,7 @@
               {{ formatPrice(text) }}
             </span>
             <span slot="createAt" slot-scope="text">
-              {{ $moment(text).format('YYYY-MM-DD') }}
+              {{ text }}
             </span>
             <span slot="action" slot-scope="record">
               <a-button type="primary" @click="editOrder(record.orderID)"
@@ -294,9 +294,20 @@
               </a-list-item>
               <div style="display: flex; justify-content: space-between">
                 <p style="color: #d48459">{{ dataRent.length }} product</p>
-                <p style="color: #d48459">
-                  Total Price : {{ formatPrice(orderRent.totalPrice) }}
-                </p>
+                <div>
+                  <p style="color: #d48459">
+                    Deposist :
+                    {{
+                      formatPrice(orderRent.totalPrice - orderRent.totalRental)
+                    }}
+                  </p>
+                  <p style="color: #d48459">
+                    Total Rental : {{ formatPrice(orderRent.totalRental) }}
+                  </p>
+                  <p style="color: #d48459">
+                    Total Price : {{ formatPrice(orderRent.totalPrice) }}
+                  </p>
+                </div>
               </div>
               <div style="display: flex; justify-content: space-between">
                 <p style="color: #d48459">
@@ -553,19 +564,47 @@
         </div>
       </a-tab-pane>
     </a-tabs>
-    <a-modal v-model="visible" title="Edit Rent Time" @ok="handleRentOk">
-      <a-form-model
-        :model="orderRentUpdate"
-        :label-col="{ span: 7 }"
-        :wrapper-col="{ span: 17 }"
-      >
-        <a-form-model-item label="Rent Date End">
-          <a-date-picker
-            v-model="orderRentUpdate.rentalEnd"
-            :disabled-date="disabledEndDate"
-          />
-        </a-form-model-item>
-      </a-form-model>
+    <a-modal v-model="visible" title="Edit Rent Time" @ok="handleOk">
+      <template v-if="dataRent.length">
+        <a-form-model
+          :model="orderRentUpdate"
+          :label-col="{ span: 7 }"
+          :wrapper-col="{ span: 17 }"
+        >
+          <a-form-model-item label="Rent Date End">
+            <a-date-picker
+              v-model="orderRentUpdate.rentalEnd"
+              :disabled-date="disabledEndDate"
+            />
+          </a-form-model-item>
+        </a-form-model>
+      </template>
+      <template v-else>
+        <a-form-model
+          :model="orderUpdate"
+          :label-col="{ span: 7 }"
+          :wrapper-col="{ span: 17 }"
+        >
+          <a-form-model-item label="Shipping Address">
+            <a-input
+              v-model="orderUpdate.shippingAddress"
+              placeholder="Enter Shipping Address"
+            />
+          </a-form-model-item>
+          <a-form-model-item label="Phone Number">
+            <a-input
+              v-model="orderUpdate.phone"
+              placeholder="Enter Phone Number"
+            />
+          </a-form-model-item>
+          <a-form-model-item label="Email Address">
+            <a-input
+              v-model="orderUpdate.email"
+              placeholder="Enter Email Address"
+            />
+          </a-form-model-item>
+        </a-form-model>
+      </template>
     </a-modal>
   </a-spin>
 </template>
@@ -593,12 +632,7 @@ const columns = [
     dataIndex: 'totalQuantity',
     key: 'totalQuantity',
   },
-  {
-    title: 'Pay Date',
-    dataIndex: 'createAt',
-    key: 'createAt',
-    scopedSlots: { customRender: 'createAt' },
-  },
+
   {
     title: 'Status',
     dataIndex: 'status',
@@ -687,6 +721,7 @@ export default {
       orderUpdate: {},
       orderRentUpdate: {},
       visible: false,
+      visibleRent: false,
     }
   },
   computed: {
@@ -909,6 +944,7 @@ export default {
           shippingAddress: result.shippingAddress,
           bookingDate: result.bookingDate,
           rentalStart: result.rentalStart,
+          totalRental: result.totalRental,
           rentalEnd: result.rentalEnd,
           lastName: result.lastName,
           firstName: result.firstName,
@@ -938,7 +974,7 @@ export default {
     showModal() {
       this.visible = true
     },
-    async handleOk(e) {
+    async handleInfoOrder() {
       try {
         this.loading = true
         await this.$api.updateOrder(this.orderID, this.orderUpdate, {
@@ -956,6 +992,22 @@ export default {
         this.visible = false
       }
     },
+    handleOk(e) {
+      if (this.dataRent.length) {
+        this.$confirm({
+          title: 'Update Order Rent ? ',
+          content:
+            'Do you sure want to renting the order it will change the total payment ? ',
+          onOk: () => this.rentingOrder(),
+        })
+      } else {
+        this.$confirm({
+          title: 'Update Order ? ',
+          content: 'Do you sure want to update order info ? ',
+          onOk: () => this.handleInfoOrder(),
+        })
+      }
+    },
     async rentingOrder() {
       try {
         this.loading = true
@@ -963,13 +1015,16 @@ export default {
           this.$moment(this.orderRentUpdate.rentalStart),
           'days'
         )
+        const deposist =
+          this.orderRentUpdate.totalPrice - this.orderRentUpdate.totalRental
         const oneOfMoney =
-          this.orderRentUpdate.totalPrice / this.orderRentUpdate.bookingDate
-        const newMoney =
-          oneOfMoney * (newDiffDay - this.orderRentUpdate.bookingDate)
-        this.orderRentUpdate.totalPrice =
-          Number(this.orderRentUpdate.totalPrice) + newMoney
+          Number(this.orderRentUpdate.totalRental) /
+          Number(this.orderRentUpdate.bookingDate)
+        const newMoney = oneOfMoney * newDiffDay
+        this.orderRentUpdate.totalRental = newMoney
+        this.orderRentUpdate.totalPrice = deposist + newMoney
         this.orderRentUpdate.bookingDate = newDiffDay
+        this.orderRentUpdate.status = 'RENTING'
         await this.$api.updateRent(this.orderRentID, this.orderRentUpdate, {
           headers: {
             Authorization: this.$auth.$storage.getUniversal('token').token,
@@ -984,14 +1039,6 @@ export default {
         await this.editOrderRent(this.orderRentID)
         this.visible = false
       }
-    },
-    handleRentOk(e) {
-      this.$confirm({
-        title: 'Update Order Rent ? ',
-        content:
-          'Do you sure want to renting the order it will change the total payment ? ',
-        onOk: () => this.rentingOrder(),
-      })
     },
     disabledEndDate(endValue) {
       const startValue = this.$moment(this.orderRentUpdate.rentalEnd)

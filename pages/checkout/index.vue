@@ -121,6 +121,15 @@
                 </td>
               </tr>
             </tbody>
+            <tr v-if="rentDate" class="total">
+              <td>
+                <h6 class="mb-0">Rental Total</h6>
+              </td>
+              <td></td>
+              <td>
+                <strong>{{ formatPrice(billingDetails.totalRental) }}</strong>
+              </td>
+            </tr>
             <tr class="total">
               <td>
                 <h6 class="mb-0">Grand Total</h6>
@@ -199,6 +208,7 @@ export default {
       user: {},
       deposist: 0,
       calcUSD: 0,
+      sumProduct: 0,
       billingDetails: {
         orderName: '',
         note: '',
@@ -209,6 +219,7 @@ export default {
         lastName: '',
         email: '',
         shippingAddress: '',
+        totalRental: 0,
         paymentType: 'PAYNOW',
         phone: '',
         userID: '',
@@ -292,9 +303,10 @@ export default {
             itemPer = Number(item.product.rental * item.quantity)
           } else {
             itemPer = Number(item.product.price * item.quantity)
+            this.billingDetails.totalPrice += itemPer
           }
           this.billingDetails.totalQuantity += Number(item.quantity)
-          this.billingDetails.totalPrice += Number(itemPer)
+          this.billingDetails.totalRental += itemPer
           this.billingDetails.product.push(item.product.productID)
           this.billingDetails.userID = user.userID
           this.billingDetails.orderName = generateHash()
@@ -307,12 +319,7 @@ export default {
             this.billingDetails.bookingDate = this.$moment(
               this.rentDate.endDate
             ).diff(this.$moment(this.rentDate.startDate), 'days')
-            this.deposist =
-              (this.billingDetails.totalPrice /
-                this.billingDetails.bookingDate) *
-              5
-            this.billingDetails.totalPrice =
-              Number(this.billingDetails.totalPrice) + Number(this.deposist)
+            this.sumProduct += Number(item.product.price)
           }
           const paypalItem = {
             name: item.product.productName,
@@ -323,6 +330,11 @@ export default {
           }
           this.myItems.push({ ...paypalItem })
         })
+        if (this.rentDate) {
+          this.deposist = this.sumProduct * 0.5
+          this.billingDetails.totalPrice =
+            this.billingDetails.totalRental + this.deposist
+        }
       }
     },
     payment() {
@@ -346,6 +358,7 @@ export default {
             },
           })
         } else {
+          delete this.billingDetails.totalRental
           this.billingDetails.createAt = Date.now()
           await this.$api.orderPlace(this.billingDetails, {
             headers: {
